@@ -15,7 +15,7 @@ return array(
 	// application-level parameters that can be accessed
 	// using Yii::app()->params['paramName']
 	'params'=>array(
-		
+		'tablePrefix'=>'uwc_'
 	),
 	
 	// components to preload
@@ -51,6 +51,9 @@ return array(
 				'<calendarid>/<action:(upcoming|search)>'=>'/view/<action>',
 				'<calendarid>/<action:(day|week|month)>/<date:[0-9\-]+>'=>'/view/<action>',
 				'<calendarid>/event/<id>'=>'/view/event',
+		
+				'/export/rss/<calendarid>'=>array('/export/rss', 'urlSuffix'=>'.rss'),
+				'/export/ical/<calendarid>/<id>'=>array('/export/ical', 'urlSuffix'=>'.ical'),
 				
 				// Standard routes.
 				'<calendarid>/<controller:\w+>'=>'<controller>',
