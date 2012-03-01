@@ -497,15 +497,16 @@ class CalDbAuthManager extends CAuthManager
 
 	/**
 	 * Returns the authorization item with the specified name.
+	 * @param string $calendarId the calendar ID
 	 * @param string $name the name of the item
 	 * @return CAuthItem the authorization item. Null if the item cannot be found.
 	 */
-	public function getAuthItem($name)
+	public function getAuthItem($calendarid,$name)
 	{
 		$row=$this->db->createCommand()
 			->select()
 			->from($this->itemTable)
-			->where('name=:name', array(':name'=>$name))
+			->where('calendarid=:calendarid AND name=:name', array(':calendarid'=>$calendarId, ':name'=>$name))
 			->queryRow();
 
 		if($row!==false)
@@ -520,29 +521,33 @@ class CalDbAuthManager extends CAuthManager
 
 	/**
 	 * Saves an authorization item to persistent storage.
+	 * @param string $calendarId the calendar ID
 	 * @param CAuthItem $item the item to be saved.
 	 * @param string $oldName the old item name. If null, it means the item name is not changed.
 	 */
-	public function saveAuthItem($item,$oldName=null)
+	public function saveAuthItem($calendarId,$item,$oldName=null)
 	{
 		if($this->usingSqlite() && $oldName!==null && $item->getName()!==$oldName)
 		{
 			$this->db->createCommand()
 				->update($this->itemChildTable, array(
 					'parent'=>$item->getName(),
-				), 'parent=:whereName', array(
+				), 'calendarid=:calendarid AND parent=:whereName', array(
+					':calendarid'=>$calendarId,
 					':whereName'=>$oldName,
 				));
 			$this->db->createCommand()
 				->update($this->itemChildTable, array(
 					'child'=>$item->getName(),
-				), 'child=:whereName', array(
+				), 'calendarid=:calendarid AND child=:whereName', array(
+					':calendarid'=>$calendarId,
 					':whereName'=>$oldName,
 				));
 			$this->db->createCommand()
 				->update($this->assignmentTable, array(
 					'itemname'=>$item->getName(),
-				), 'itemname=:whereName', array(
+				), 'calendarid=:calendarid AND itemname=:whereName', array(
+					':calendarid'=>$calendarId,
 					':whereName'=>$oldName,
 				));
 		}
@@ -554,7 +559,8 @@ class CalDbAuthManager extends CAuthManager
 				'description'=>$item->getDescription(),
 				'bizrule'=>$item->getBizRule(),
 				'data'=>serialize($item->getData()),
-			), 'name=:whereName', array(
+			), 'calendarid=:calendarid AND name=:whereName', array(
+				':calendarid'=>$calendarId,
 				':whereName'=>$oldName===null?$item->getName():$oldName,
 			));
 	}
@@ -569,19 +575,33 @@ class CalDbAuthManager extends CAuthManager
 	/**
 	 * Removes all authorization data.
 	 */
-	public function clearAll()
+	public function clearAll($calendarId=NULL)
 	{
-		$this->clearAuthAssignments();
-		$this->db->createCommand()->delete($this->itemChildTable);
-		$this->db->createCommand()->delete($this->itemTable);
+		$conditions='';
+		$params=array();
+		if (!is_null($calendarId)) {
+			$conditions='calendarid=:calendarid';
+			$params[':calendarid'] = $calendarId; 
+		}
+		
+		$this->clearAuthAssignments($calendarId);
+		$this->db->createCommand()->delete($this->itemChildTable, $conditions, $params);
+		$this->db->createCommand()->delete($this->itemTable, $conditions, $params);
 	}
 
 	/**
 	 * Removes all authorization assignments.
 	 */
-	public function clearAuthAssignments()
+	public function clearAuthAssignments($calendarId=NULL)
 	{
-		$this->db->createCommand()->delete($this->assignmentTable);
+		$conditions='';
+		$params=array();
+		if (!is_null($calendarId)) {
+			$conditions='calendarid=:calendarid';
+			$params[':calendarid'] = $calendarId; 
+		}
+		
+		$this->db->createCommand()->delete($this->assignmentTable, $conditions, $params);
 	}
 
 	/**
