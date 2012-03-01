@@ -1,15 +1,17 @@
 <?php
 /**
- * CDbAuthManager class file.
+ * CalDbAuthManager class file.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
+ * @author Modified for UWebCal by André Mekkawi <uwebcal@andremekkawi.com>
  * @link http://www.yiiframework.com/
+ * @link http://www.uwebcal.com/
  * @copyright Copyright &copy; 2008-2011 Yii Software LLC
  * @license http://www.yiiframework.com/license/
  */
 
 /**
- * CDbAuthManager represents an authorization manager that stores authorization information in database.
+ * CalDbAuthManager represents an authorization manager that stores authorization information in database.
  *
  * The database connection is specified by {@link connectionID}. And the database schema
  * should be as described in "framework/web/auth/*.sql". You may change the names of
@@ -19,11 +21,11 @@
  * @property array $authItems The authorization items of the specific type.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
- * @version $Id: CDbAuthManager.php 3515 2011-12-28 12:29:24Z mdomba $
+ * @author Modified for UWebCal by André Mekkawi <uwebcal@andremekkawi.com>
  * @package system.web.auth
  * @since 1.0
  */
-class CDbAuthManager extends CAuthManager
+class CalDbAuthManager extends CAuthManager
 {
 	/**
 	 * @var string the ID of the {@link CDbConnection} application component. Defaults to 'db'.
@@ -47,6 +49,11 @@ class CDbAuthManager extends CAuthManager
 	 * automatically as the application component whose ID is indicated as {@link connectionID}.
 	 */
 	public $db;
+	/**
+	 * @var boolean whether the the tables use foreign key relationships to cascade updates and deletes.
+	 * Defaults to true, meaning that the tables use foreign key relationships. Always false for 'sqlite' databases.
+	 */
+	public $useForeignKeys=true;
 
 	private $_usingSqlite;
 
@@ -57,7 +64,7 @@ class CDbAuthManager extends CAuthManager
 	public function init()
 	{
 		parent::init();
-		$this->_usingSqlite=!strncmp($this->getDbConnection()->getDriverName(),'sqlite',6);
+		$this->_usingSqlite= !$this->useForeignKeys || !strncmp($this->getDbConnection()->getDriverName(),'sqlite',6) ;
 	}
 
 	/**
@@ -238,6 +245,7 @@ class CDbAuthManager extends CAuthManager
 
 	/**
 	 * Assigns an authorization item to a user.
+	 * @param string $calendarId the calendar ID
 	 * @param string $itemName the item name
 	 * @param mixed $userId the user ID (see {@link IWebUser::getId})
 	 * @param string $bizRule the business rule to be executed when {@link checkAccess} is called
@@ -246,13 +254,14 @@ class CDbAuthManager extends CAuthManager
 	 * @return CAuthAssignment the authorization assignment information.
 	 * @throws CException if the item does not exist or if the item has already been assigned to the user
 	 */
-	public function assign($itemName,$userId,$bizRule=null,$data=null)
+	public function assign($calendarId,$itemName,$userId,$bizRule=null,$data=null)
 	{
 		if($this->usingSqlite() && $this->getAuthItem($itemName)===null)
 			throw new CException(Yii::t('yii','The item "{name}" does not exist.',array('{name}'=>$itemName)));
 
 		$this->db->createCommand()
 			->insert($this->assignmentTable, array(
+				'calendarid'=>$calendarId,
 				'itemname'=>$itemName,
 				'userid'=>$userId,
 				'bizrule'=>$bizRule,
@@ -263,14 +272,16 @@ class CDbAuthManager extends CAuthManager
 
 	/**
 	 * Revokes an authorization assignment from a user.
+	 * @param string $calendarId the calendar ID
 	 * @param string $itemName the item name
 	 * @param mixed $userId the user ID (see {@link IWebUser::getId})
 	 * @return boolean whether removal is successful
 	 */
-	public function revoke($itemName,$userId)
+	public function revoke($calendarId,$itemName,$userId)
 	{
 		return $this->db->createCommand()
-			->delete($this->assignmentTable, 'itemname=:itemname AND userid=:userid', array(
+			->delete($this->assignmentTable, 'calendarid=:calendarid AND itemname=:itemname AND userid=:userid', array(
+				':calendarid'=>$calendarId,
 				':itemname'=>$itemName,
 				':userid'=>$userId
 			)) > 0;
@@ -278,16 +289,18 @@ class CDbAuthManager extends CAuthManager
 
 	/**
 	 * Returns a value indicating whether the item has been assigned to the user.
+	 * @param string $calendarId the calendar ID
 	 * @param string $itemName the item name
 	 * @param mixed $userId the user ID (see {@link IWebUser::getId})
 	 * @return boolean whether the item has been assigned to the user.
 	 */
-	public function isAssigned($itemName,$userId)
+	public function isAssigned($calendarId,$itemName,$userId)
 	{
 		return $this->db->createCommand()
 			->select('itemname')
 			->from($this->assignmentTable)
-			->where('itemname=:itemname AND userid=:userid', array(
+			->where('calendarid=:calendarid AND itemname=:itemname AND userid=:userid', array(
+				':calendarid'=>$calendarId,
 				':itemname'=>$itemName,
 				':userid'=>$userId))
 			->queryScalar() !== false;
@@ -295,17 +308,19 @@ class CDbAuthManager extends CAuthManager
 
 	/**
 	 * Returns the item assignment information.
+	 * @param string $calendarId the calendar ID
 	 * @param string $itemName the item name
 	 * @param mixed $userId the user ID (see {@link IWebUser::getId})
 	 * @return CAuthAssignment the item assignment information. Null is returned if
 	 * the item is not assigned to the user.
 	 */
-	public function getAuthAssignment($itemName,$userId)
+	public function getAuthAssignment($calendarId,$itemName,$userId)
 	{
 		$row=$this->db->createCommand()
 			->select()
 			->from($this->assignmentTable)
-			->where('itemname=:itemname AND userid=:userid', array(
+			->where('calendarid=:calendarid AND itemname=:itemname AND userid=:userid', array(
+				':calendarid'=>$calendarId,
 				':itemname'=>$itemName,
 				':userid'=>$userId))
 			->queryRow();
@@ -321,16 +336,17 @@ class CDbAuthManager extends CAuthManager
 
 	/**
 	 * Returns the item assignments for the specified user.
+	 * @param string $calendarId the calendar ID
 	 * @param mixed $userId the user ID (see {@link IWebUser::getId})
 	 * @return array the item assignment information for the user. An empty array will be
 	 * returned if there is no item assigned to the user.
 	 */
-	public function getAuthAssignments($userId)
+	public function getAuthAssignments($calendarId,$userId)
 	{
 		$rows=$this->db->createCommand()
 			->select()
 			->from($this->assignmentTable)
-			->where('userid=:userid', array(':userid'=>$userId))
+			->where('calendarid=:calendarid AND userid=:userid', array(':calendarid'=>$calendarId,':userid'=>$userId))
 			->queryAll();
 		$assignments=array();
 		foreach($rows as $row)
@@ -344,15 +360,17 @@ class CDbAuthManager extends CAuthManager
 
 	/**
 	 * Saves the changes to an authorization assignment.
+	 * @param string $calendarId the calendar ID
 	 * @param CAuthAssignment $assignment the assignment that has been changed.
 	 */
-	public function saveAuthAssignment($assignment)
+	public function saveAuthAssignment($calendarid,$assignment)
 	{
 		$this->db->createCommand()
 			->update($this->assignmentTable, array(
 				'bizrule'=>$assignment->getBizRule(),
 				'data'=>serialize($assignment->getData()),
-			), 'itemname=:itemname AND userid=:userid', array(
+			), 'calendarid=:calendarid AND itemname=:itemname AND userid=:userid', array(
+				'calendarid'=>$calendarId,
 				'itemname'=>$assignment->getItemName(),
 				'userid'=>$assignment->getUserId()
 			));
@@ -360,26 +378,28 @@ class CDbAuthManager extends CAuthManager
 
 	/**
 	 * Returns the authorization items of the specific type and user.
+	 * @param string $calendarId the calendar ID
 	 * @param integer $type the item type (0: operation, 1: task, 2: role). Defaults to null,
 	 * meaning returning all items regardless of their type.
 	 * @param mixed $userId the user ID. Defaults to null, meaning returning all items even if
 	 * they are not assigned to a user.
 	 * @return array the authorization items of the specific type.
 	 */
-	public function getAuthItems($type=null,$userId=null)
+	public function getAuthItems($calendarId,$type=null,$userId=null)
 	{
 		if($type===null && $userId===null)
 		{
 			$command=$this->db->createCommand()
 				->select()
-				->from($this->itemTable);
+				->from($this->itemTable)
+				->where('calendarid=:calendarid', array(':calendarid'=>$calendarId));
 		}
 		else if($userId===null)
 		{
 			$command=$this->db->createCommand()
 				->select()
 				->from($this->itemTable)
-				->where('type=:type', array(':type'=>$type));
+				->where('calendarid=:calendarid AND type=:type', array(':calendarid'=>$calendarId, ':type'=>$type));
 		}
 		else if($type===null)
 		{
@@ -389,7 +409,7 @@ class CDbAuthManager extends CAuthManager
 					$this->itemTable.' t1',
 					$this->assignmentTable.' t2'
 				))
-				->where('name=itemname AND userid=:userid', array(':userid'=>$userId));
+				->where('calendarid=:calendarid AND name=itemname AND userid=:userid', array(':calendarid'=>$calendarId, ':userid'=>$userId));
 		}
 		else
 		{
@@ -399,7 +419,8 @@ class CDbAuthManager extends CAuthManager
 					$this->itemTable.' t1',
 					$this->assignmentTable.' t2'
 				))
-				->where('name=itemname AND type=:type AND userid=:userid', array(
+				->where('calendarid=:calendarid AND name=itemname AND type=:type AND userid=:userid', array(
+					':calendarid'=>$calendarId,
 					':type'=>$type,
 					':userid'=>$userId
 				));
@@ -420,6 +441,7 @@ class CDbAuthManager extends CAuthManager
 	 * It has three types: operation, task and role.
 	 * Authorization items form a hierarchy. Higher level items inheirt permissions representing
 	 * by lower level items.
+	 * @param string $calendarId the calendar ID
 	 * @param string $name the item name. This must be a unique identifier.
 	 * @param integer $type the item type (0: operation, 1: task, 2: role).
 	 * @param string $description description of the item
@@ -429,10 +451,11 @@ class CDbAuthManager extends CAuthManager
 	 * @return CAuthItem the authorization item
 	 * @throws CException if an item with the same name already exists
 	 */
-	public function createAuthItem($name,$type,$description='',$bizRule=null,$data=null)
+	public function createAuthItem($calendarId,$name,$type,$description='',$bizRule=null,$data=null)
 	{
 		$this->db->createCommand()
 			->insert($this->itemTable, array(
+				'calendarid'=>$calendarId,
 				'name'=>$name,
 				'type'=>$type,
 				'description'=>$description,
@@ -444,26 +467,30 @@ class CDbAuthManager extends CAuthManager
 
 	/**
 	 * Removes the specified authorization item.
+	 * @param string $calendarId the calendar ID
 	 * @param string $name the name of the item to be removed
 	 * @return boolean whether the item exists in the storage and has been removed
 	 */
-	public function removeAuthItem($name)
+	public function removeAuthItem($calendarId,$name)
 	{
 		if($this->usingSqlite())
 		{
 			$this->db->createCommand()
-				->delete($this->itemChildTable, 'parent=:name1 OR child=:name2', array(
+				->delete($this->itemChildTable, 'calendarid=:calendarid AND (parent=:name1 OR child=:name2)', array(
+					':calendarid'=>$calendarId,
 					':name1'=>$name,
 					':name2'=>$name
 			));
 			$this->db->createCommand()
-				->delete($this->assignmentTable, 'itemname=:name', array(
+				->delete($this->assignmentTable, 'calendarid=:calendarid AND itemname=:name', array(
+					':calendarid'=>$calendarId,
 					':name'=>$name,
 			));
 		}
 
 		return $this->db->createCommand()
-			->delete($this->itemTable, 'name=:name', array(
+			->delete($this->itemTable, 'calendarid=:calendarid AND name=:name', array(
+				':calendarid'=>$calendarId,
 				':name'=>$name
 			)) > 0;
 	}
