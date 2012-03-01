@@ -25,6 +25,7 @@ return array(
 	'import'=>array(
 		'application.models.*',
 		'application.components.*',
+		'application.components.auth.*',
 	),
 
 	'modules'=>array(
