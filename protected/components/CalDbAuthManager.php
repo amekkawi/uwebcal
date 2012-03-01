@@ -13,10 +13,9 @@
 /**
  * CalDbAuthManager represents an authorization manager that stores authorization information in database.
  *
- * The database connection is specified by {@link connectionID}. And the database schema
- * should be as described in "framework/web/auth/*.sql". You may change the names of
- * the three tables used to store the authorization data by setting {@link itemTable},
- * {@link itemChildTable} and {@link assignmentTable}.
+ * The database connection is specified by {@link connectionID}. You may change
+ * the names of the three tables used to store the authorization data by setting
+ * {@link itemTable}, {@link itemChildTable} and {@link assignmentTable}.
  *
  * @property array $authItems The authorization items of the specific type.
  *
@@ -25,11 +24,10 @@
  * @package system.web.auth
  * @since 1.0
  */
-class CalDbAuthManager extends CAuthManager
+class CalDbAuthManager extends CalAuthManager
 {
 	/**
 	 * @var string the ID of the {@link CDbConnection} application component. Defaults to 'db'.
-	 * The database must have the tables as declared in "framework/web/auth/*.sql".
 	 */
 	public $connectionID='db';
 	/**
