@@ -69,6 +69,7 @@ class CalDbAuthManager extends CAuthManager
 
 	/**
 	 * Performs access check for the specified user.
+	 * @param string $calendarId the calendar ID
 	 * @param string $itemName the name of the operation that need access check
 	 * @param mixed $userId the user ID. This should can be either an integer and a string representing
 	 * the unique identifier of a user. See {@link IWebUser::getId}.
@@ -76,15 +77,16 @@ class CalDbAuthManager extends CAuthManager
 	 * with the tasks and roles assigned to the user.
 	 * @return boolean whether the operations can be performed by the user.
 	 */
-	public function checkAccess($itemName,$userId,$params=array())
+	public function checkAccess($calendarId,$itemName,$userId,$params=array())
 	{
-		$assignments=$this->getAuthAssignments($userId);
-		return $this->checkAccessRecursive($itemName,$userId,$params,$assignments);
+		$assignments=$this->getAuthAssignments($calendarId,$userId);
+		return $this->checkAccessRecursive($calendarId,$itemName,$userId,$params,$assignments);
 	}
 
 	/**
 	 * Performs access check for the specified user.
 	 * This method is internally called by {@link checkAccess}.
+	 * @param string $calendarId the calendar ID
 	 * @param string $itemName the name of the operation that need access check
 	 * @param mixed $userId the user ID. This should can be either an integer and a string representing
 	 * the unique identifier of a user. See {@link IWebUser::getId}.
@@ -94,9 +96,9 @@ class CalDbAuthManager extends CAuthManager
 	 * @return boolean whether the operations can be performed by the user.
 	 * @since 1.1.3
 	 */
-	protected function checkAccessRecursive($itemName,$userId,$params,$assignments)
+	protected function checkAccessRecursive($calendarId,$itemName,$userId,$params,$assignments)
 	{
-		if(($item=$this->getAuthItem($itemName))===null)
+		if(($item=$this->getAuthItem($calendarId,$itemName))===null)
 			return false;
 		Yii::trace('Checking permission "'.$item->getName().'"','system.web.auth.CDbAuthManager');
 		if($this->executeBizRule($item->getBizRule(),$params,$item->getData()))
@@ -112,11 +114,11 @@ class CalDbAuthManager extends CAuthManager
 			$parents=$this->db->createCommand()
 				->select('parent')
 				->from($this->itemChildTable)
-				->where('child=:name', array(':name'=>$itemName))
+				->where('calendarid=:calendarid AND child=:name', array(':calendarid'=>$calendarId,':name'=>$itemName))
 				->queryColumn();
 			foreach($parents as $parent)
 			{
-				if($this->checkAccessRecursive($parent,$userId,$params,$assignments))
+				if($this->checkAccessRecursive($calendarId,$parent,$userId,$params,$assignments))
 					return true;
 			}
 		}
@@ -125,12 +127,13 @@ class CalDbAuthManager extends CAuthManager
 
 	/**
 	 * Adds an item as a child of another item.
+	 * @param string $calendarId the calendar ID
 	 * @param string $itemName the parent item name
 	 * @param string $childName the child item name
 	 * @return boolean whether the item is added successfully
 	 * @throws CException if either parent or child doesn't exist or if a loop has been detected.
 	 */
-	public function addItemChild($itemName,$childName)
+	public function addItemChild($calendarId,$itemName,$childName)
 	{
 		if($itemName===$childName)
 			throw new CException(Yii::t('yii','Cannot add "{name}" as a child of itself.',
@@ -139,7 +142,8 @@ class CalDbAuthManager extends CAuthManager
 		$rows=$this->db->createCommand()
 			->select()
 			->from($this->itemTable)
-			->where('name=:name1 OR name=:name2', array(
+			->where('calendarid=:calendarid AND (name=:name1 OR name=:name2)', array(
+				':calendarid'=>$calendarId,
 				':name1'=>$itemName,
 				':name2'=>$childName
 			))
@@ -158,12 +162,13 @@ class CalDbAuthManager extends CAuthManager
 				$parentType=$rows[1]['type'];
 			}
 			$this->checkItemChildType($parentType,$childType);
-			if($this->detectLoop($itemName,$childName))
+			if($this->detectLoop($calendarId, $itemName,$childName))
 				throw new CException(Yii::t('yii','Cannot add "{child}" as a child of "{name}". A loop has been detected.',
 					array('{child}'=>$childName,'{name}'=>$itemName)));
 
 			$this->db->createCommand()
 				->insert($this->itemChildTable, array(
+					'calendarid'=>$calendarId,
 					'parent'=>$itemName,
 					'child'=>$childName,
 				));
@@ -177,14 +182,16 @@ class CalDbAuthManager extends CAuthManager
 	/**
 	 * Removes a child from its parent.
 	 * Note, the child item is not deleted. Only the parent-child relationship is removed.
+	 * @param string $calendarId the calendar ID
 	 * @param string $itemName the parent item name
 	 * @param string $childName the child item name
 	 * @return boolean whether the removal is successful
 	 */
-	public function removeItemChild($itemName,$childName)
+	public function removeItemChild($calendarId,$itemName,$childName)
 	{
 		return $this->db->createCommand()
-			->delete($this->itemChildTable, 'parent=:parent AND child=:child', array(
+			->delete($this->itemChildTable, 'calendarid=:calendarid AND parent=:parent AND child=:child', array(
+				':calendarid'=>$calendarId,
 				':parent'=>$itemName,
 				':child'=>$childName
 			)) > 0;
@@ -192,16 +199,18 @@ class CalDbAuthManager extends CAuthManager
 
 	/**
 	 * Returns a value indicating whether a child exists within a parent.
+	 * @param string $calendarId the calendar ID
 	 * @param string $itemName the parent item name
 	 * @param string $childName the child item name
 	 * @return boolean whether the child exists
 	 */
-	public function hasItemChild($itemName,$childName)
+	public function hasItemChild($calendarId,$itemName,$childName)
 	{
 		return $this->db->createCommand()
 			->select('parent')
 			->from($this->itemChildTable)
-			->where('parent=:parent AND child=:child', array(
+			->where('calendarid=:calendarid AND parent=:parent AND child=:child', array(
+				':calendarid'=>$calendarId,
 				':parent'=>$itemName,
 				':child'=>$childName))
 			->queryScalar() !== false;
@@ -209,11 +218,12 @@ class CalDbAuthManager extends CAuthManager
 
 	/**
 	 * Returns the children of the specified item.
+	 * @param string $calendarId the calendar ID
 	 * @param mixed $names the parent item name. This can be either a string or an array.
 	 * The latter represents a list of item names.
 	 * @return array all child items of the parent
 	 */
-	public function getItemChildren($names)
+	public function getItemChildren($calendarId,$names)
 	{
 		if(is_string($names))
 			$condition='parent='.$this->db->quoteValue($names);
@@ -230,7 +240,7 @@ class CalDbAuthManager extends CAuthManager
 				$this->itemTable,
 				$this->itemChildTable
 			))
-			->where($condition.' AND name=child')
+			->where('calendarid=:calendarid AND ' . $condition.' AND name=child', array(':calendarid'=>$calendarId))
 			->queryAll();
 
 		$children=array();
@@ -256,7 +266,7 @@ class CalDbAuthManager extends CAuthManager
 	 */
 	public function assign($calendarId,$itemName,$userId,$bizRule=null,$data=null)
 	{
-		if($this->usingSqlite() && $this->getAuthItem($itemName)===null)
+		if($this->usingSqlite() && $this->getAuthItem($calendarId,$itemName)===null)
 			throw new CException(Yii::t('yii','The item "{name}" does not exist.',array('{name}'=>$itemName)));
 
 		$this->db->createCommand()
@@ -606,17 +616,18 @@ class CalDbAuthManager extends CAuthManager
 
 	/**
 	 * Checks whether there is a loop in the authorization item hierarchy.
+	 * @param string $calendarId the calendar ID
 	 * @param string $itemName parent item name
 	 * @param string $childName the name of the child item that is to be added to the hierarchy
 	 * @return boolean whether a loop exists
 	 */
-	protected function detectLoop($itemName,$childName)
+	protected function detectLoop($calendarId,$itemName,$childName)
 	{
 		if($childName===$itemName)
 			return true;
-		foreach($this->getItemChildren($childName) as $child)
+		foreach($this->getItemChildren($calendarId,$childName) as $child)
 		{
-			if($this->detectLoop($itemName,$child->getName()))
+			if($this->detectLoop($calendarId,$itemName,$child->getName()))
 				return true;
 		}
 		return false;
