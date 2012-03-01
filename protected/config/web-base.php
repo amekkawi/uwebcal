@@ -64,6 +64,9 @@ return array(
 				//'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
 			),
 		),
+		'authManager'=>array(
+			'class'=>'CalDbAuthManager'
+		),
 		'errorHandler'=>array(
             'errorAction'=>'view/error',
         ),
