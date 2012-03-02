@@ -3,7 +3,7 @@
  * CalAuthManager class file.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
- * @author Modified for UWebCal by André Mekkawi <uwebcal@andremekkawi.com>
+ * @author André Mekkawi <uwebcal@andremekkawi.com>
  * @link http://www.yiiframework.com/
  * @link http://www.uwebcal.com/
  * @copyright Copyright &copy; 2008-2011 Yii Software LLC
@@ -37,8 +37,7 @@
  * @property array $operations Operations (name=>CAuthItem).
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
- * @package system.web.auth
- * @since 1.0
+ * @author André Mekkawi <uwebcal@andremekkawi.com>
  */
 abstract class CalAuthManager extends CApplicationComponent implements ICalAuthManager
 {

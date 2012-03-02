@@ -5,10 +5,8 @@
  * An calendar auth manager is mainly responsible for providing role-based access control (RBAC) service.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
- * @author Modified for UWebCal by André Mekkawi <uwebcal@andremekkawi.com>
+ * @author André Mekkawi <uwebcal@andremekkawi.com>
  * @link http://www.uwebcal.com/
- * @package system.base
- * @since 1.0
  */
 interface ICalAuthManager
 {
@@ -114,7 +112,7 @@ interface ICalAuthManager
 	 * @param string $bizRule the business rule to be executed when {@link checkAccess} is called
 	 * for this particular authorization item.
 	 * @param mixed $data additional data associated with this assignment
-	 * @return CAuthAssignment the authorization assignment information.
+	 * @return CalAuthAssignment the authorization assignment information.
 	 * @throws CException if the item does not exist or if the item has already been assigned to the user
 	 */
 	public function assign($calendarId,$itemName,$userId,$bizRule=null,$data=null);
@@ -139,7 +137,7 @@ interface ICalAuthManager
 	 * @param string $calendarId the calendar ID
 	 * @param string $itemName the item name
 	 * @param mixed $userId the user ID (see {@link IWebUser::getId})
-	 * @return CAuthAssignment the item assignment information. Null is returned if
+	 * @return CalAuthAssignment the item assignment information. Null is returned if
 	 * the item is not assigned to the user.
 	 */
 	public function getAuthAssignment($calendarId,$itemName,$userId);
@@ -153,10 +151,9 @@ interface ICalAuthManager
 	public function getAuthAssignments($calendarId,$userId);
 	/**
 	 * Saves the changes to an authorization assignment.
-	 * @param string $calendarId the calendar ID
-	 * @param CAuthAssignment $assignment the assignment that has been changed.
+	 * @param CalAuthAssignment $assignment the assignment that has been changed.
 	 */
-	public function saveAuthAssignment($calendarId,$assignment);
+	public function saveAuthAssignment($assignment);
 
 	/**
 	 * Removes all authorization data.

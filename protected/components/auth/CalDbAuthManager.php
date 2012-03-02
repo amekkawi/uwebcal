@@ -3,7 +3,7 @@
  * CalDbAuthManager class file.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
- * @author Modified for UWebCal by André Mekkawi <uwebcal@andremekkawi.com>
+ * @author André Mekkawi <uwebcal@andremekkawi.com>
  * @link http://www.yiiframework.com/
  * @link http://www.uwebcal.com/
  * @copyright Copyright &copy; 2008-2011 Yii Software LLC
@@ -20,9 +20,7 @@
  * @property array $authItems The authorization items of the specific type.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
- * @author Modified for UWebCal by André Mekkawi <uwebcal@andremekkawi.com>
- * @package system.web.auth
- * @since 1.0
+ * @author André Mekkawi <uwebcal@andremekkawi.com>
  */
 class CalDbAuthManager extends CalAuthManager
 {
@@ -259,7 +257,7 @@ class CalDbAuthManager extends CalAuthManager
 	 * @param string $bizRule the business rule to be executed when {@link checkAccess} is called
 	 * for this particular authorization item.
 	 * @param mixed $data additional data associated with this assignment
-	 * @return CAuthAssignment the authorization assignment information.
+	 * @return CalAuthAssignment the authorization assignment information.
 	 * @throws CException if the item does not exist or if the item has already been assigned to the user
 	 */
 	public function assign($calendarId,$itemName,$userId,$bizRule=null,$data=null)
@@ -275,7 +273,7 @@ class CalDbAuthManager extends CalAuthManager
 				'bizrule'=>$bizRule,
 				'data'=>serialize($data)
 			));
-		return new CAuthAssignment($this,$itemName,$userId,$bizRule,$data);
+		return new CalAuthAssignment($this,$calendarId,$itemName,$userId,$bizRule,$data);
 	}
 
 	/**
@@ -319,7 +317,7 @@ class CalDbAuthManager extends CalAuthManager
 	 * @param string $calendarId the calendar ID
 	 * @param string $itemName the item name
 	 * @param mixed $userId the user ID (see {@link IWebUser::getId})
-	 * @return CAuthAssignment the item assignment information. Null is returned if
+	 * @return CalAuthAssignment the item assignment information. Null is returned if
 	 * the item is not assigned to the user.
 	 */
 	public function getAuthAssignment($calendarId,$itemName,$userId)
@@ -336,7 +334,7 @@ class CalDbAuthManager extends CalAuthManager
 		{
 			if(($data=@unserialize($row['data']))===false)
 				$data=null;
-			return new CAuthAssignment($this,$row['itemname'],$row['userid'],$row['bizrule'],$data);
+			return new CalAuthAssignment($this,$row['calendarid'],$row['itemname'],$row['userid'],$row['bizrule'],$data);
 		}
 		else
 			return null;
@@ -361,24 +359,23 @@ class CalDbAuthManager extends CalAuthManager
 		{
 			if(($data=@unserialize($row['data']))===false)
 				$data=null;
-			$assignments[$row['itemname']]=new CAuthAssignment($this,$row['itemname'],$row['userid'],$row['bizrule'],$data);
+			$assignments[$row['itemname']]=new CalAuthAssignment($this,$row['calendarid'],$row['itemname'],$row['userid'],$row['bizrule'],$data);
 		}
 		return $assignments;
 	}
 
 	/**
 	 * Saves the changes to an authorization assignment.
-	 * @param string $calendarId the calendar ID
-	 * @param CAuthAssignment $assignment the assignment that has been changed.
+	 * @param CalAuthAssignment $assignment the assignment that has been changed.
 	 */
-	public function saveAuthAssignment($calendarid,$assignment)
+	public function saveAuthAssignment($assignment)
 	{
 		$this->db->createCommand()
 			->update($this->assignmentTable, array(
 				'bizrule'=>$assignment->getBizRule(),
 				'data'=>serialize($assignment->getData()),
 			), 'calendarid=:calendarid AND itemname=:itemname AND userid=:userid', array(
-				'calendarid'=>$calendarId,
+				'calendarid'=>$assignment->getCalendarId(),
 				'itemname'=>$assignment->getItemName(),
 				'userid'=>$assignment->getUserId()
 			));
