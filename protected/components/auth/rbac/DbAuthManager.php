@@ -109,7 +109,7 @@ class CalDbAuthManager extends AuthManager
 	{
 		if(($item=$this->getAuthItem($calendarId,$itemName))===null)
 			return false;
-		Yii::trace('Checking permission "'.$item->getName().'"','application.components.auth.CDbAuthManager');
+		Yii::trace('Checking permission "'.$item->getName().'"','application.components.auth.rbac.DbAuthManager');
 		if($this->executeBizRule($item->getBizRule(),$params,$item->getData()))
 		{
 			if(in_array($itemName,$this->defaultRoles))

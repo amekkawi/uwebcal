@@ -89,7 +89,7 @@ class AuthItem extends CComponent
 			}
 		}
 		
-		Yii::trace('Checking permission "'.$this->_name.'"','application.components.auth.AuthItem');
+		Yii::trace('Checking permission "'.$this->_name.'"','application.components.auth.rbac.AuthItem');
 		if($this->_auth->executeBizRule($this->_bizRule,$params,$this->_data))
 		{
 			if($this->_name==$itemName)
