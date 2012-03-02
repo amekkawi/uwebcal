@@ -35,7 +35,7 @@ interface ICalAuthManager
 	 * @param string $bizRule business rule associated with the item. This is a piece of
 	 * PHP code that will be executed when {@link checkAccess} is called for the item.
 	 * @param mixed $data additional data associated with the item.
-	 * @return CAuthItem the authorization item
+	 * @return CalAuthItem the authorization item
 	 * @throws CException if an item with the same name already exists
 	 */
 	public function createAuthItem($calendarId,$name,$type,$description='',$bizRule=null,$data=null);
@@ -59,13 +59,13 @@ interface ICalAuthManager
 	/**
 	 * Returns the authorization item with the specified name.
 	 * @param string $name the name of the item
-	 * @return CAuthItem the authorization item. Null if the item cannot be found.
+	 * @return CalAuthItem the authorization item. Null if the item cannot be found.
 	 */
 	public function getAuthItem($calendarId,$name);
 	/**
 	 * Saves an authorization item to persistent storage.
 	 * @param string $calendarId the calendar ID
-	 * @param CAuthItem $item the item to be saved.
+	 * @param CalAuthItem $item the item to be saved.
 	 * @param string $oldName the old item name. If null, it means the item name is not changed.
 	 */
 	public function saveAuthItem($calendarId,$item,$oldName=null);

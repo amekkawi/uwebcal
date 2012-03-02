@@ -20,7 +20,7 @@
  * Access Control (RBAC).
  *
  * The main idea is that permissions are organized as a hierarchy of
- * {@link CAuthItem authorization items}. Items on higer level inherit the permissions
+ * {@link CalAuthItem authorization items}. Items on higer level inherit the permissions
  * represented by items on lower level. And roles are simply top-level authorization items
  * that may be assigned to individual users. A user is said to have a permission
  * to do something if the corresponding authorization item is inherited by one of his roles.
@@ -31,10 +31,6 @@
  * so that it is more intuitive to end-users. Second, developers call {@link CalAuthManager::checkAccess}
  * at appropriate places in the application code to check if the current user
  * has the needed permission for an operation.
- *
- * @property array $roles Roles (name=>CAuthItem).
- * @property array $tasks Tasks (name=>CAuthItem).
- * @property array $operations Operations (name=>CAuthItem).
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @author André Mekkawi <uwebcal@andremekkawi.com>
@@ -67,11 +63,11 @@ abstract class CalAuthManager extends CApplicationComponent implements ICalAuthM
 	 * @param string $description the item description.
 	 * @param string $bizRule the business rule associated with this item
 	 * @param mixed $data additional data to be passed when evaluating the business rule
-	 * @return CAuthItem the authorization item
+	 * @return CalAuthItem the authorization item
 	 */
 	public function createRole($calendarId,$name,$description='',$bizRule=null,$data=null)
 	{
-		return $this->createAuthItem($calendarId,$name,CAuthItem::TYPE_ROLE,$description,$bizRule,$data);
+		return $this->createAuthItem($calendarId,$name,CalAuthItem::TYPE_ROLE,$description,$bizRule,$data);
 	}
 
 	/**
@@ -82,11 +78,11 @@ abstract class CalAuthManager extends CApplicationComponent implements ICalAuthM
 	 * @param string $description the item description.
 	 * @param string $bizRule the business rule associated with this item
 	 * @param mixed $data additional data to be passed when evaluating the business rule
-	 * @return CAuthItem the authorization item
+	 * @return CalAuthItem the authorization item
 	 */
 	public function createTask($calendarId,$name,$description='',$bizRule=null,$data=null)
 	{
-		return $this->createAuthItem($calendarId,$name,CAuthItem::TYPE_TASK,$description,$bizRule,$data);
+		return $this->createAuthItem($calendarId,$name,CalAuthItem::TYPE_TASK,$description,$bizRule,$data);
 	}
 
 	/**
@@ -97,11 +93,11 @@ abstract class CalAuthManager extends CApplicationComponent implements ICalAuthM
 	 * @param string $description the item description.
 	 * @param string $bizRule the business rule associated with this item
 	 * @param mixed $data additional data to be passed when evaluating the business rule
-	 * @return CAuthItem the authorization item
+	 * @return CalAuthItem the authorization item
 	 */
 	public function createOperation($calendarId,$name,$description='',$bizRule=null,$data=null)
 	{
-		return $this->createAuthItem($calendarId,$name,CAuthItem::TYPE_OPERATION,$description,$bizRule,$data);
+		return $this->createAuthItem($calendarId,$name,CalAuthItem::TYPE_OPERATION,$description,$bizRule,$data);
 	}
 
 	/**
@@ -110,11 +106,11 @@ abstract class CalAuthManager extends CApplicationComponent implements ICalAuthM
 	 * @param string $calendarId the calendar ID
 	 * @param mixed $userId the user ID. If not null, only the roles directly assigned to the user
 	 * will be returned. Otherwise, all roles will be returned.
-	 * @return array roles (name=>CAuthItem)
+	 * @return array roles (name=>CalAuthItem)
 	 */
 	public function getRoles($calendarId,$userId=null)
 	{
-		return $this->getAuthItems($calendarId,CAuthItem::TYPE_ROLE,$userId);
+		return $this->getAuthItems($calendarId,CalAuthItem::TYPE_ROLE,$userId);
 	}
 
 	/**
@@ -123,11 +119,11 @@ abstract class CalAuthManager extends CApplicationComponent implements ICalAuthM
 	 * @param string $calendarId the calendar ID
 	 * @param mixed $userId the user ID. If not null, only the tasks directly assigned to the user
 	 * will be returned. Otherwise, all tasks will be returned.
-	 * @return array tasks (name=>CAuthItem)
+	 * @return array tasks (name=>CalAuthItem)
 	 */
 	public function getTasks($calendarId,$userId=null)
 	{
-		return $this->getAuthItems($calendarId,CAuthItem::TYPE_TASK,$userId);
+		return $this->getAuthItems($calendarId,CalAuthItem::TYPE_TASK,$userId);
 	}
 
 	/**
@@ -136,11 +132,11 @@ abstract class CalAuthManager extends CApplicationComponent implements ICalAuthM
 	 * @param string $calendarId the calendar ID
 	 * @param mixed $userId the user ID. If not null, only the operations directly assigned to the user
 	 * will be returned. Otherwise, all operations will be returned.
-	 * @return array operations (name=>CAuthItem)
+	 * @return array operations (name=>CalAuthItem)
 	 */
 	public function getOperations($calendarId,$userId=null)
 	{
-		return $this->getAuthItems($calendarId,CAuthItem::TYPE_OPERATION,$userId);
+		return $this->getAuthItems($calendarId,CalAuthItem::TYPE_OPERATION,$userId);
 	}
 
 	/**

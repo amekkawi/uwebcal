@@ -65,7 +65,7 @@ class CalDbAuthManager extends CalAuthManager
 
 	/**
 	 * Performs access check for the specified user.
-	 * @param string $calendarId the calendar ID
+	 * @param string $calendarId optional calendar ID
 	 * @param string $itemName the name of the operation that need access check
 	 * @param mixed $userId the user ID. This should can be either an integer and a string representing
 	 * the unique identifier of a user. See {@link IWebUser::getId}.
@@ -73,8 +73,21 @@ class CalDbAuthManager extends CalAuthManager
 	 * with the tasks and roles assigned to the user.
 	 * @return boolean whether the operations can be performed by the user.
 	 */
-	public function checkAccess($calendarId,$itemName,$userId,$params=array())
+	public function checkAccess($calendarId,$itemName,$userId=array(),$params=array())
 	{
+		if (is_array($userId)) {
+			$params = $userId;
+			$userId = $itemName;
+			$itemName = $calendarId;
+			$calendarId = NULL;
+			
+			$itemNameParts = explode(':', $itemName, 2);
+			if (count($itemNameParts) == 2) {
+				$calendarId = $itemNameParts[0];
+				$itemName = $itemNameParts[1];
+			}
+		}
+		
 		$assignments=$this->getAuthAssignments($calendarId,$userId);
 		return $this->checkAccessRecursive($calendarId,$itemName,$userId,$params,$assignments);
 	}
@@ -96,7 +109,7 @@ class CalDbAuthManager extends CalAuthManager
 	{
 		if(($item=$this->getAuthItem($calendarId,$itemName))===null)
 			return false;
-		Yii::trace('Checking permission "'.$item->getName().'"','system.web.auth.CDbAuthManager');
+		Yii::trace('Checking permission "'.$item->getName().'"','application.components.auth.CDbAuthManager');
 		if($this->executeBizRule($item->getBizRule(),$params,$item->getData()))
 		{
 			if(in_array($itemName,$this->defaultRoles))
@@ -231,12 +244,12 @@ class CalDbAuthManager extends CalAuthManager
 		}
 
 		$rows=$this->db->createCommand()
-			->select('name, type, description, bizrule, data')
+			->select('t1.calendarid, name, type, description, bizrule, data')
 			->from(array(
-				$this->itemTable,
-				$this->itemChildTable
+				$this->itemTable.' t1',
+				$this->itemChildTable.' t2'
 			))
-			->where('calendarid=:calendarid AND ' . $condition.' AND name=child', array(':calendarid'=>$calendarId))
+			->where('t1.calendarid=:calendarid AND t1.calendarid=t2.calendarid AND ' . $condition.' AND name=child', array(':calendarid'=>$calendarId))
 			->queryAll();
 
 		$children=array();
@@ -244,7 +257,7 @@ class CalDbAuthManager extends CalAuthManager
 		{
 			if(($data=@unserialize($row['data']))===false)
 				$data=null;
-			$children[$row['name']]=new CAuthItem($this,$row['name'],$row['type'],$row['description'],$row['bizrule'],$data);
+			$children[$row['name']]=new CalAuthItem($this,$row['calendarid'],$row['name'],$row['type'],$row['description'],$row['bizrule'],$data);
 		}
 		return $children;
 	}
@@ -414,7 +427,7 @@ class CalDbAuthManager extends CalAuthManager
 					$this->itemTable.' t1',
 					$this->assignmentTable.' t2'
 				))
-				->where('calendarid=:calendarid AND name=itemname AND userid=:userid', array(':calendarid'=>$calendarId, ':userid'=>$userId));
+				->where('t1.calendarid=:calendarid AND t1.calendarid=t2.calendarid AND name=itemname AND userid=:userid', array(':calendarid'=>$calendarId, ':userid'=>$userId));
 		}
 		else
 		{
@@ -424,7 +437,7 @@ class CalDbAuthManager extends CalAuthManager
 					$this->itemTable.' t1',
 					$this->assignmentTable.' t2'
 				))
-				->where('calendarid=:calendarid AND name=itemname AND type=:type AND userid=:userid', array(
+				->where('t1.calendarid=:calendarid AND t1.calendarid=t2.calendarid AND name=itemname AND type=:type AND userid=:userid', array(
 					':calendarid'=>$calendarId,
 					':type'=>$type,
 					':userid'=>$userId
@@ -435,7 +448,7 @@ class CalDbAuthManager extends CalAuthManager
 		{
 			if(($data=@unserialize($row['data']))===false)
 				$data=null;
-			$items[$row['name']]=new CAuthItem($this,$row['name'],$row['type'],$row['description'],$row['bizrule'],$data);
+			$items[$row['name']]=new CalAuthItem($this,$row['calendarid'],$row['name'],$row['type'],$row['description'],$row['bizrule'],$data);
 		}
 		return $items;
 	}
@@ -453,7 +466,7 @@ class CalDbAuthManager extends CalAuthManager
 	 * @param string $bizRule business rule associated with the item. This is a piece of
 	 * PHP code that will be executed when {@link checkAccess} is called for the item.
 	 * @param mixed $data additional data associated with the item.
-	 * @return CAuthItem the authorization item
+	 * @return CalAuthItem the authorization item
 	 * @throws CException if an item with the same name already exists
 	 */
 	public function createAuthItem($calendarId,$name,$type,$description='',$bizRule=null,$data=null)
@@ -467,7 +480,7 @@ class CalDbAuthManager extends CalAuthManager
 				'bizrule'=>$bizRule,
 				'data'=>serialize($data)
 			));
-		return new CAuthItem($this,$name,$type,$description,$bizRule,$data);
+		return new CalAuthItem($this,$calendarId,$name,$type,$description,$bizRule,$data);
 	}
 
 	/**
@@ -504,7 +517,7 @@ class CalDbAuthManager extends CalAuthManager
 	 * Returns the authorization item with the specified name.
 	 * @param string $calendarId the calendar ID
 	 * @param string $name the name of the item
-	 * @return CAuthItem the authorization item. Null if the item cannot be found.
+	 * @return CalAuthItem the authorization item. Null if the item cannot be found.
 	 */
 	public function getAuthItem($calendarid,$name)
 	{
@@ -518,7 +531,7 @@ class CalDbAuthManager extends CalAuthManager
 		{
 			if(($data=@unserialize($row['data']))===false)
 				$data=null;
-			return new CAuthItem($this,$row['name'],$row['type'],$row['description'],$row['bizrule'],$data);
+			return new CalAuthItem($this,$row['calendarid'],$row['name'],$row['type'],$row['description'],$row['bizrule'],$data);
 		}
 		else
 			return null;
@@ -527,10 +540,10 @@ class CalDbAuthManager extends CalAuthManager
 	/**
 	 * Saves an authorization item to persistent storage.
 	 * @param string $calendarId the calendar ID
-	 * @param CAuthItem $item the item to be saved.
+	 * @param CalAuthItem $item the item to be saved.
 	 * @param string $oldName the old item name. If null, it means the item name is not changed.
 	 */
-	public function saveAuthItem($calendarId,$item,$oldName=null)
+	public function saveAuthItem($item,$oldName=null)
 	{
 		if($this->usingSqlite() && $oldName!==null && $item->getName()!==$oldName)
 		{
@@ -538,21 +551,21 @@ class CalDbAuthManager extends CalAuthManager
 				->update($this->itemChildTable, array(
 					'parent'=>$item->getName(),
 				), 'calendarid=:calendarid AND parent=:whereName', array(
-					':calendarid'=>$calendarId,
+					':calendarid'=>$item->getCalendarId(),
 					':whereName'=>$oldName,
 				));
 			$this->db->createCommand()
 				->update($this->itemChildTable, array(
 					'child'=>$item->getName(),
 				), 'calendarid=:calendarid AND child=:whereName', array(
-					':calendarid'=>$calendarId,
+					':calendarid'=>$item->getCalendarId(),
 					':whereName'=>$oldName,
 				));
 			$this->db->createCommand()
 				->update($this->assignmentTable, array(
 					'itemname'=>$item->getName(),
 				), 'calendarid=:calendarid AND itemname=:whereName', array(
-					':calendarid'=>$calendarId,
+					':calendarid'=>$item->getCalendarId(),
 					':whereName'=>$oldName,
 				));
 		}
@@ -565,7 +578,7 @@ class CalDbAuthManager extends CalAuthManager
 				'bizrule'=>$item->getBizRule(),
 				'data'=>serialize($item->getData()),
 			), 'calendarid=:calendarid AND name=:whereName', array(
-				':calendarid'=>$calendarId,
+				':calendarid'=>$item->getCalendarId(),
 				':whereName'=>$oldName===null?$item->getName():$oldName,
 			));
 	}

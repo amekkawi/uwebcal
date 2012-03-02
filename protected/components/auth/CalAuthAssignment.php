@@ -12,7 +12,7 @@
  * CalAuthAssignment represents an assignment of a role to a user.
  * It includes additional assignment information such as {@link bizRule} and {@link data}.
  * Do not create a CalAuthAssignment instance using the 'new' operator.
- * Instead, call {@link IAuthManager::assign}.
+ * Instead, call {@link ICalAuthManager::assign}.
  *
  * @property mixed $userId User ID (see {@link IWebUser::getId}).
  * @property string $itemName The authorization item name.
@@ -32,7 +32,7 @@ class CalAuthAssignment extends CComponent
 
 	/**
 	 * Constructor.
-	 * @param IAuthManager $auth the authorization manager
+	 * @param ICalAuthManager $auth the authorization manager
 	 * @param string $calendarId the calendar ID
 	 * @param string $itemName authorization item name
 	 * @param mixed $userId user ID (see {@link IWebUser::getId})
