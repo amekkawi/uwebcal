@@ -35,7 +35,7 @@ interface ICalAuthManager
 	 * @param string $bizRule business rule associated with the item. This is a piece of
 	 * PHP code that will be executed when {@link checkAccess} is called for the item.
 	 * @param mixed $data additional data associated with the item.
-	 * @return CalAuthItem the authorization item
+	 * @return AuthItem the authorization item
 	 * @throws CException if an item with the same name already exists
 	 */
 	public function createAuthItem($calendarId,$name,$type,$description='',$bizRule=null,$data=null);
@@ -59,13 +59,13 @@ interface ICalAuthManager
 	/**
 	 * Returns the authorization item with the specified name.
 	 * @param string $name the name of the item
-	 * @return CalAuthItem the authorization item. Null if the item cannot be found.
+	 * @return AuthItem the authorization item. Null if the item cannot be found.
 	 */
 	public function getAuthItem($calendarId,$name);
 	/**
 	 * Saves an authorization item to persistent storage.
 	 * @param string $calendarId the calendar ID
-	 * @param CalAuthItem $item the item to be saved.
+	 * @param AuthItem $item the item to be saved.
 	 * @param string $oldName the old item name. If null, it means the item name is not changed.
 	 */
 	public function saveAuthItem($calendarId,$item,$oldName=null);
@@ -112,7 +112,7 @@ interface ICalAuthManager
 	 * @param string $bizRule the business rule to be executed when {@link checkAccess} is called
 	 * for this particular authorization item.
 	 * @param mixed $data additional data associated with this assignment
-	 * @return CalAuthAssignment the authorization assignment information.
+	 * @return AuthAssignment the authorization assignment information.
 	 * @throws CException if the item does not exist or if the item has already been assigned to the user
 	 */
 	public function assign($calendarId,$itemName,$userId,$bizRule=null,$data=null);
@@ -137,7 +137,7 @@ interface ICalAuthManager
 	 * @param string $calendarId the calendar ID
 	 * @param string $itemName the item name
 	 * @param mixed $userId the user ID (see {@link IWebUser::getId})
-	 * @return CalAuthAssignment the item assignment information. Null is returned if
+	 * @return AuthAssignment the item assignment information. Null is returned if
 	 * the item is not assigned to the user.
 	 */
 	public function getAuthAssignment($calendarId,$itemName,$userId);
@@ -151,7 +151,7 @@ interface ICalAuthManager
 	public function getAuthAssignments($calendarId,$userId);
 	/**
 	 * Saves the changes to an authorization assignment.
-	 * @param CalAuthAssignment $assignment the assignment that has been changed.
+	 * @param AuthAssignment $assignment the assignment that has been changed.
 	 */
 	public function saveAuthAssignment($assignment);
 

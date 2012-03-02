@@ -1,6 +1,6 @@
 <?php
 /**
- * CalAuthManager class file.
+ * AuthManager class file.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @author André Mekkawi <uwebcal@andremekkawi.com>
@@ -11,31 +11,31 @@
  */
 
 /**
- * CalAuthManager is the base class for authorization manager classes.
+ * AuthManager is the base class for authorization manager classes.
  *
- * CalAuthManager extends {@link CApplicationComponent} and implements some methods
+ * AuthManager extends {@link CApplicationComponent} and implements some methods
  * that are common among authorization manager classes.
  *
- * CalAuthManager together with its concrete child classes implement the Role-Based
+ * AuthManager together with its concrete child classes implement the Role-Based
  * Access Control (RBAC).
  *
  * The main idea is that permissions are organized as a hierarchy of
- * {@link CalAuthItem authorization items}. Items on higer level inherit the permissions
+ * {@link AuthItem authorization items}. Items on higer level inherit the permissions
  * represented by items on lower level. And roles are simply top-level authorization items
  * that may be assigned to individual users. A user is said to have a permission
  * to do something if the corresponding authorization item is inherited by one of his roles.
  *
  * Using authorization manager consists of two aspects. First, the authorization hierarchy
- * and assignments have to be established. CalAuthManager and its child classes
+ * and assignments have to be established. AuthManager and its child classes
  * provides APIs to accomplish this task. Developers may need to develop some GUI
- * so that it is more intuitive to end-users. Second, developers call {@link CalAuthManager::checkAccess}
+ * so that it is more intuitive to end-users. Second, developers call {@link AuthManager::checkAccess}
  * at appropriate places in the application code to check if the current user
  * has the needed permission for an operation.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @author André Mekkawi <uwebcal@andremekkawi.com>
  */
-abstract class CalAuthManager extends CApplicationComponent implements ICalAuthManager
+abstract class AuthManager extends CApplicationComponent implements ICalAuthManager
 {
 	/**
 	 * @var boolean Enable error reporting for bizRules.	 
@@ -63,11 +63,11 @@ abstract class CalAuthManager extends CApplicationComponent implements ICalAuthM
 	 * @param string $description the item description.
 	 * @param string $bizRule the business rule associated with this item
 	 * @param mixed $data additional data to be passed when evaluating the business rule
-	 * @return CalAuthItem the authorization item
+	 * @return AuthItem the authorization item
 	 */
 	public function createRole($calendarId,$name,$description='',$bizRule=null,$data=null)
 	{
-		return $this->createAuthItem($calendarId,$name,CalAuthItem::TYPE_ROLE,$description,$bizRule,$data);
+		return $this->createAuthItem($calendarId,$name,AuthItem::TYPE_ROLE,$description,$bizRule,$data);
 	}
 
 	/**
@@ -78,11 +78,11 @@ abstract class CalAuthManager extends CApplicationComponent implements ICalAuthM
 	 * @param string $description the item description.
 	 * @param string $bizRule the business rule associated with this item
 	 * @param mixed $data additional data to be passed when evaluating the business rule
-	 * @return CalAuthItem the authorization item
+	 * @return AuthItem the authorization item
 	 */
 	public function createTask($calendarId,$name,$description='',$bizRule=null,$data=null)
 	{
-		return $this->createAuthItem($calendarId,$name,CalAuthItem::TYPE_TASK,$description,$bizRule,$data);
+		return $this->createAuthItem($calendarId,$name,AuthItem::TYPE_TASK,$description,$bizRule,$data);
 	}
 
 	/**
@@ -93,11 +93,11 @@ abstract class CalAuthManager extends CApplicationComponent implements ICalAuthM
 	 * @param string $description the item description.
 	 * @param string $bizRule the business rule associated with this item
 	 * @param mixed $data additional data to be passed when evaluating the business rule
-	 * @return CalAuthItem the authorization item
+	 * @return AuthItem the authorization item
 	 */
 	public function createOperation($calendarId,$name,$description='',$bizRule=null,$data=null)
 	{
-		return $this->createAuthItem($calendarId,$name,CalAuthItem::TYPE_OPERATION,$description,$bizRule,$data);
+		return $this->createAuthItem($calendarId,$name,AuthItem::TYPE_OPERATION,$description,$bizRule,$data);
 	}
 
 	/**
@@ -106,11 +106,11 @@ abstract class CalAuthManager extends CApplicationComponent implements ICalAuthM
 	 * @param string $calendarId the calendar ID
 	 * @param mixed $userId the user ID. If not null, only the roles directly assigned to the user
 	 * will be returned. Otherwise, all roles will be returned.
-	 * @return array roles (name=>CalAuthItem)
+	 * @return array roles (name=>AuthItem)
 	 */
 	public function getRoles($calendarId,$userId=null)
 	{
-		return $this->getAuthItems($calendarId,CalAuthItem::TYPE_ROLE,$userId);
+		return $this->getAuthItems($calendarId,AuthItem::TYPE_ROLE,$userId);
 	}
 
 	/**
@@ -119,11 +119,11 @@ abstract class CalAuthManager extends CApplicationComponent implements ICalAuthM
 	 * @param string $calendarId the calendar ID
 	 * @param mixed $userId the user ID. If not null, only the tasks directly assigned to the user
 	 * will be returned. Otherwise, all tasks will be returned.
-	 * @return array tasks (name=>CalAuthItem)
+	 * @return array tasks (name=>AuthItem)
 	 */
 	public function getTasks($calendarId,$userId=null)
 	{
-		return $this->getAuthItems($calendarId,CalAuthItem::TYPE_TASK,$userId);
+		return $this->getAuthItems($calendarId,AuthItem::TYPE_TASK,$userId);
 	}
 
 	/**
@@ -132,11 +132,11 @@ abstract class CalAuthManager extends CApplicationComponent implements ICalAuthM
 	 * @param string $calendarId the calendar ID
 	 * @param mixed $userId the user ID. If not null, only the operations directly assigned to the user
 	 * will be returned. Otherwise, all operations will be returned.
-	 * @return array operations (name=>CalAuthItem)
+	 * @return array operations (name=>AuthItem)
 	 */
 	public function getOperations($calendarId,$userId=null)
 	{
-		return $this->getAuthItems($calendarId,CalAuthItem::TYPE_OPERATION,$userId);
+		return $this->getAuthItems($calendarId,AuthItem::TYPE_OPERATION,$userId);
 	}
 
 	/**

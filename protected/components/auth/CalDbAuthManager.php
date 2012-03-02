@@ -22,7 +22,7 @@
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @author André Mekkawi <uwebcal@andremekkawi.com>
  */
-class CalDbAuthManager extends CalAuthManager
+class CalDbAuthManager extends AuthManager
 {
 	/**
 	 * @var string the ID of the {@link CDbConnection} application component. Defaults to 'db'.
@@ -257,7 +257,7 @@ class CalDbAuthManager extends CalAuthManager
 		{
 			if(($data=@unserialize($row['data']))===false)
 				$data=null;
-			$children[$row['name']]=new CalAuthItem($this,$row['calendarid'],$row['name'],$row['type'],$row['description'],$row['bizrule'],$data);
+			$children[$row['name']]=new AuthItem($this,$row['calendarid'],$row['name'],$row['type'],$row['description'],$row['bizrule'],$data);
 		}
 		return $children;
 	}
@@ -270,7 +270,7 @@ class CalDbAuthManager extends CalAuthManager
 	 * @param string $bizRule the business rule to be executed when {@link checkAccess} is called
 	 * for this particular authorization item.
 	 * @param mixed $data additional data associated with this assignment
-	 * @return CalAuthAssignment the authorization assignment information.
+	 * @return AuthAssignment the authorization assignment information.
 	 * @throws CException if the item does not exist or if the item has already been assigned to the user
 	 */
 	public function assign($calendarId,$itemName,$userId,$bizRule=null,$data=null)
@@ -286,7 +286,7 @@ class CalDbAuthManager extends CalAuthManager
 				'bizrule'=>$bizRule,
 				'data'=>serialize($data)
 			));
-		return new CalAuthAssignment($this,$calendarId,$itemName,$userId,$bizRule,$data);
+		return new AuthAssignment($this,$calendarId,$itemName,$userId,$bizRule,$data);
 	}
 
 	/**
@@ -330,7 +330,7 @@ class CalDbAuthManager extends CalAuthManager
 	 * @param string $calendarId the calendar ID
 	 * @param string $itemName the item name
 	 * @param mixed $userId the user ID (see {@link IWebUser::getId})
-	 * @return CalAuthAssignment the item assignment information. Null is returned if
+	 * @return AuthAssignment the item assignment information. Null is returned if
 	 * the item is not assigned to the user.
 	 */
 	public function getAuthAssignment($calendarId,$itemName,$userId)
@@ -347,7 +347,7 @@ class CalDbAuthManager extends CalAuthManager
 		{
 			if(($data=@unserialize($row['data']))===false)
 				$data=null;
-			return new CalAuthAssignment($this,$row['calendarid'],$row['itemname'],$row['userid'],$row['bizrule'],$data);
+			return new AuthAssignment($this,$row['calendarid'],$row['itemname'],$row['userid'],$row['bizrule'],$data);
 		}
 		else
 			return null;
@@ -372,14 +372,14 @@ class CalDbAuthManager extends CalAuthManager
 		{
 			if(($data=@unserialize($row['data']))===false)
 				$data=null;
-			$assignments[$row['itemname']]=new CalAuthAssignment($this,$row['calendarid'],$row['itemname'],$row['userid'],$row['bizrule'],$data);
+			$assignments[$row['itemname']]=new AuthAssignment($this,$row['calendarid'],$row['itemname'],$row['userid'],$row['bizrule'],$data);
 		}
 		return $assignments;
 	}
 
 	/**
 	 * Saves the changes to an authorization assignment.
-	 * @param CalAuthAssignment $assignment the assignment that has been changed.
+	 * @param AuthAssignment $assignment the assignment that has been changed.
 	 */
 	public function saveAuthAssignment($assignment)
 	{
@@ -448,7 +448,7 @@ class CalDbAuthManager extends CalAuthManager
 		{
 			if(($data=@unserialize($row['data']))===false)
 				$data=null;
-			$items[$row['name']]=new CalAuthItem($this,$row['calendarid'],$row['name'],$row['type'],$row['description'],$row['bizrule'],$data);
+			$items[$row['name']]=new AuthItem($this,$row['calendarid'],$row['name'],$row['type'],$row['description'],$row['bizrule'],$data);
 		}
 		return $items;
 	}
@@ -466,7 +466,7 @@ class CalDbAuthManager extends CalAuthManager
 	 * @param string $bizRule business rule associated with the item. This is a piece of
 	 * PHP code that will be executed when {@link checkAccess} is called for the item.
 	 * @param mixed $data additional data associated with the item.
-	 * @return CalAuthItem the authorization item
+	 * @return AuthItem the authorization item
 	 * @throws CException if an item with the same name already exists
 	 */
 	public function createAuthItem($calendarId,$name,$type,$description='',$bizRule=null,$data=null)
@@ -480,7 +480,7 @@ class CalDbAuthManager extends CalAuthManager
 				'bizrule'=>$bizRule,
 				'data'=>serialize($data)
 			));
-		return new CalAuthItem($this,$calendarId,$name,$type,$description,$bizRule,$data);
+		return new AuthItem($this,$calendarId,$name,$type,$description,$bizRule,$data);
 	}
 
 	/**
@@ -517,7 +517,7 @@ class CalDbAuthManager extends CalAuthManager
 	 * Returns the authorization item with the specified name.
 	 * @param string $calendarId the calendar ID
 	 * @param string $name the name of the item
-	 * @return CalAuthItem the authorization item. Null if the item cannot be found.
+	 * @return AuthItem the authorization item. Null if the item cannot be found.
 	 */
 	public function getAuthItem($calendarid,$name)
 	{
@@ -531,7 +531,7 @@ class CalDbAuthManager extends CalAuthManager
 		{
 			if(($data=@unserialize($row['data']))===false)
 				$data=null;
-			return new CalAuthItem($this,$row['calendarid'],$row['name'],$row['type'],$row['description'],$row['bizrule'],$data);
+			return new AuthItem($this,$row['calendarid'],$row['name'],$row['type'],$row['description'],$row['bizrule'],$data);
 		}
 		else
 			return null;
@@ -540,7 +540,7 @@ class CalDbAuthManager extends CalAuthManager
 	/**
 	 * Saves an authorization item to persistent storage.
 	 * @param string $calendarId the calendar ID
-	 * @param CalAuthItem $item the item to be saved.
+	 * @param AuthItem $item the item to be saved.
 	 * @param string $oldName the old item name. If null, it means the item name is not changed.
 	 */
 	public function saveAuthItem($item,$oldName=null)
