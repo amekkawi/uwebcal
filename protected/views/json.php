@@ -1,0 +1,1 @@
+<?php echo CJSON::encode($json); ?>
