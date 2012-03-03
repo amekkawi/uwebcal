@@ -1,6 +1,6 @@
 <?php
 /**
- * CalDbAuthManager class file.
+ * DbAuthManager class file.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @author André Mekkawi <uwebcal@andremekkawi.com>
@@ -11,7 +11,7 @@
  */
 
 /**
- * CalDbAuthManager represents an authorization manager that stores authorization information in database.
+ * DbAuthManager represents an authorization manager that stores authorization information in database.
  *
  * The database connection is specified by {@link connectionID}. You may change
  * the names of the three tables used to store the authorization data by setting
@@ -22,7 +22,7 @@
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @author André Mekkawi <uwebcal@andremekkawi.com>
  */
-class CalDbAuthManager extends AuthManager
+class DbAuthManager extends AuthManager
 {
 	/**
 	 * @var string the ID of the {@link CDbConnection} application component. Defaults to 'db'.

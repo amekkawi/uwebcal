@@ -68,7 +68,7 @@ interface ICalAuthManager
 	 * @param AuthItem $item the item to be saved.
 	 * @param string $oldName the old item name. If null, it means the item name is not changed.
 	 */
-	public function saveAuthItem($calendarId,$item,$oldName=null);
+	public function saveAuthItem($item,$oldName=null);
 
 	/**
 	 * Adds an item as a child of another item.
