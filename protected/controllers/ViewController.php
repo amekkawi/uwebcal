@@ -10,53 +10,36 @@
 
 /**
  * The View controller handles non-administrative viewing of events.
- * @property string $calendar The data for the calendar.
  * @author André Mekkawi <uwebcal@andremekkawi.com>
  * @package app.web
  */
 class ViewController extends Controller {
 	
-	private $_calendar = NULL;
-	private $_calendarAR = NULL;
-	
 	public function init() {
 		if (!isset($_GET['calendarid'])) {
 			$_GET['calendarid'] = Yii::app()->params['defaultCalendarId'];
 		}
-		if ($this->action != "error") {
-			$this->_calendarAR = Calendar::model()->findByPk($_GET['calendarid']);
-			if ($this->_calendarAR !== NULL) {
-				$this->_calendar = $this->_calendarAR->getAttributes();
+		
+		if (!$this->loadCalendar($_GET['calendarid'])) {
+			$exception = new CHttpException(404, Yii::t('app', 'A calendar with the ID "{calendarid}" was not found.', array('{calendarid}' => $_GET['calendarid'])));
+			
+			// Output JSON for AJAX errors.
+			if (Yii::app()->request->isAjaxRequest) {
+				Yii::app()->displayException($exception);
 			}
+				
+			// Redirect the user to a custom URL, if specified.
+			elseif (Yii::app()->params['calendarNotFoundRedirect'] !== NULL) {
+				$this->redirect(Yii::app()->params['calendarNotFoundRedirect']);
+			}
+			
+			// Show a generic 404 page.
 			else {
-				$exception = new CHttpException(404, Yii::t('app', 'A calendar with the ID "{calendarid}" was not found.', array('{calendarid}' => $_GET['calendarid'])));
-				
-				// Output JSON for AJAX errors.
-				if (Yii::app()->request->isAjaxRequest) {
-					Yii::app()->displayException($exception);
-				}
-					
-				// Redirect the user to a custom URL, if specified.
-				elseif (Yii::app()->params['calendarNotFoundRedirect'] !== NULL) {
-					$this->redirect(Yii::app()->params['calendarNotFoundRedirect']);
-				}
-				
-				// Show a generic 404 page.
-				else {
-					throw $exception;
-				}
-				
-				exit;
+				throw $exception;
 			}
+			
+			exit;
 		}
-	}
-	
-	/**
-	 * Get the calendar data.
-	 * @return the calendar data (see {@link CActiveRecord::getAttributes}).
-	 */
-	public function getCalendar() {
-		return $this->_calendar;
 	}
 	
 	/**
@@ -100,7 +83,7 @@ class ViewController extends Controller {
 	/**
 	 * Show events for a specific week.
 	 */
-	public function actionWeek($calendarid, $date) {
+	public function actionWeek($calendarid, $date=NULL) {
 		$utime = $this->dateToUTime($date, date('Y-m-d'));
 		
 		// Determine exact start day
