@@ -3,7 +3,7 @@
 $configDir = dirname(__FILE__).'/protected/config';
 
 $base = require($configDir.'/web-base.php');
-$local = (@include_once($configDir.'/web-local.php'));
+$local = (@include($configDir.'/web-local.php'));
 
 if ((@include_once($yii)) === FALSE) {
 ?>
@@ -37,5 +37,8 @@ if ((@include_once($yii)) === FALSE) {
 }
 
 $config = CMap::mergeArray($base, $local);
+
+date_default_timezone_set($config['params']['timezone']);
+
 require_once(dirname(__FILE__).'/protected/components/WebApplication.php');
 Yii::createApplication('WebApplication',$config)->run();
