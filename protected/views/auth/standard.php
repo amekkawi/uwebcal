@@ -1,6 +1,6 @@
 <h1>Login:</h1>
 <div class="loginform">
-	<form action="<?php echo CHtml::encode(Yii::app()->createUrl('login')); ?>" method="POST">
+	<form action="<?php echo CHtml::encode(Yii::app()->createUrl($this->id . '/' . $this->action->id, $_GET)); ?>" method="POST">
 		<?php
 		foreach (Yii::app()->user->flashes as $flash) {
 			?><div class="flash"><?php echo CHtml::encode($flash); ?></div><?php
