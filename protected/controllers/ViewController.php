@@ -1,8 +1,18 @@
 <?php
+/**
+ * ViewController class file.
+ *
+ * @author André Mekkawi <uwebcal@andremekkawi.com>
+ * @link http://www.uwebcal.com/
+ * @copyright Copyright &copy; André Mekkawi
+ * @license http://www.uwebcal.com/license/
+ */
 
 /**
  * The View controller handles non-administrative viewing of events.
  * @property string $calendar The data for the calendar.
+ * @author André Mekkawi <uwebcal@andremekkawi.com>
+ * @package app.web
  */
 class ViewController extends Controller {
 	
@@ -20,12 +30,22 @@ class ViewController extends Controller {
 			}
 			else {
 				$exception = new CHttpException(404, Yii::t('app', 'A calendar with the ID "{calendarid}" was not found.', array('{calendarid}' => $_GET['calendarid'])));
-				if (Yii::app()->request->isAjaxRequest)
+				
+				// Output JSON for AJAX errors.
+				if (Yii::app()->request->isAjaxRequest) {
 					Yii::app()->displayException($exception);
-				elseif (Yii::app()->params['calendarNotFoundRedirect'] !== NULL)
+				}
+					
+				// Redirect the user to a custom URL, if specified.
+				elseif (Yii::app()->params['calendarNotFoundRedirect'] !== NULL) {
 					$this->redirect(Yii::app()->params['calendarNotFoundRedirect']);
-				else
-					throw new CHttpException(404, Yii::t('app', 'A calendar with the ID "{calendarid}" was not found.', array('{calendarid}' => $_GET['calendarid'])));
+				}
+				
+				// Show a generic 404 page.
+				else {
+					throw $exception;
+				}
+				
 				exit;
 			}
 		}
@@ -42,43 +62,49 @@ class ViewController extends Controller {
 	/**
 	 * Default action to handle URLs that do not specify the calendar ID.
 	 */
-	public function actionIndex() {
-		// renders the view file 'protected/views/site/index.php'
-		// using the default layout 'protected/views/layouts/main.php'
-		if (!isset($_GET['calendarid'])) {
-			$_GET['calendarid'] = Yii::app()->params['defaultCalendarId'];
-		}
-		
-		// TODO: Determine the default view action for the specific calendar from the DB.
-		$this->forward('/view/' . Yii::app()->params['defaultViewAction']);
+	public function actionIndex($calendarid) {
+		$this->forward('/view/' . ($this->calendar['defaultview'] !== NULL ? $this->calendar['defaultview'] : Yii::app()->params['defaultViewAction']));
 	}
 	
 	/**
 	 * Show upcoming events.
 	 */
-	public function actionUpcoming() {
-		$this->render('upcoming');
+	public function actionUpcoming($calendarid) {
+		//Yii::app()->clientScript->registerCssFile(Yii::app()->baseUrl.'/css/some-file.css');
+		//Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/some-file.js');
+	    $this->render('upcoming');
 	}
 	
 	/**
 	 * Show events for a specific month.
 	 */
-	public function actionMonth($calendarid,$date) {
-		var_dump($_GET);
+	public function actionMonth($calendarid, $date=NULL) {
+		if ($date === NULL) $date = date('Y-m');
+		$utime = strtotime($date);
+		var_dump($calendarid, $date, $utime);
 	}
 	
 	/**
 	 * Show events for a specific week.
 	 */
-	public function actionWeek() {
-		var_dump($_GET);
+	public function actionWeek($calendarid, $date=NULL) {
+		if ($date === NULL) $date = date('Y-m-d');
+		$utime = strtotime($date);
+		
+		// Adjust time if necessary
+		$weekday = (int)date('w', $utime);
+		if ($weekday >= 0)
+			$utime = strtotime("-$weekday day", $utime);
+		
+		var_dump($calendarid, $date, date('r T', $utime), Yii::app()->dateFormatter->formatDateTime($utime, 'long', 'long'));
 	}
 	
 	/**
 	 * Show events for a specific day.
 	 */
-	public function actionDay() {
-		var_dump($_GET);
+	public function actionDay($calendarid, $date=NULL) {
+		if ($date === NULL) $date = date('Y-m-d');
+		var_dump($calendarid, $date);
 	}
 	
 	/**
@@ -93,35 +119,5 @@ class ViewController extends Controller {
 	 */
 	public function actionEvent() {
 		var_dump($_GET);
-	}
-
-	/**
-	 * Handle errors.
-	 */
-	public function actionError() {
-		Yii::app()->clientScript->registerCssFile(Yii::app()->baseUrl.'/css/some-file.css');
-		Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/some-file.js');
-	    if($error = Yii::app()->errorHandler->error) {
-	    	if(Yii::app()->request->isAjaxRequest) {
-	    		$this->render('/ajax', array('json' => array(
-	    			'result'=>false,
-	    			'internalerror'=>array(
-	    				'type'=>$error['type'],
-	    				'message'=>$error['message'],
-	    				'errorCode'=>isset($error['errorCode']) ? $error['errorCode'] : null,
-	    				'code'=>$error['code']
-	    			)
-	    		)));
-	    	}
-	    	elseif ($error['type'] == "CHttpException") {
-	    		$this->render('/errors/http', $error);
-	    	}
-	    	elseif ($error['type'] == "CDbException") {
-	    		$this->render('/errors/db', $error);
-	    	}
-	    	else {
-	        	$this->render('/errors/runtime', $error);
-	    	}
-	    }
 	}
 }
