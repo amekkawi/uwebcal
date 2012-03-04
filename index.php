@@ -38,6 +38,10 @@ if ((@include_once($yii)) === FALSE) {
 
 $config = CMap::mergeArray($base, $local);
 
+if (!isset($config['params']['useUrlManager']) || !$config['params']['useUrlManager']) {
+	unset($config['components']['urlManager']);
+}
+
 date_default_timezone_set($config['params']['timezone']);
 
 require_once(dirname(__FILE__).'/protected/components/WebApplication.php');
