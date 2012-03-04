@@ -75,36 +75,48 @@ class ViewController extends Controller {
 	    $this->render('upcoming');
 	}
 	
+	private function dateToUTime($date, $default) {
+		if (!is_string($date)) $date = $default;
+		
+		if (($utime = strtotime($date.' 00:00:00')) === false)
+			throw new CHttpException(400, Yii::t('app','Invalid date "{date}".', array('{date}'=>$date)));
+		else
+			return $utime; 
+	}
+	
 	/**
 	 * Show events for a specific month.
 	 */
 	public function actionMonth($calendarid, $date=NULL) {
-		if ($date === NULL) $date = date('Y-m');
-		$utime = strtotime($date);
-		var_dump($calendarid, $date, $utime);
+		$utime = $this->dateToUTime($date.'-01', date('Y-m').'-01');
+		
+		// Adjust time if necessary
+		if (($day = ((int)date('j', $utime))-1) >= 0)
+			$utime = strtotime("-$day day", $utime);
+		
+		var_dump($calendarid, $date, date('r T', $utime), Yii::app()->dateFormatter->formatDateTime($utime, 'long', 'long'));
 	}
 	
 	/**
 	 * Show events for a specific week.
 	 */
-	public function actionWeek($calendarid, $date=NULL) {
-		if ($date === NULL) $date = date('Y-m-d');
-		$utime = strtotime($date);
+	public function actionWeek($calendarid, $date) {
+		$utime = $this->dateToUTime($date, date('Y-m-d'));
 		
-		// Adjust time if necessary
+		// Determine exact start day
 		$weekday = (int)date('w', $utime);
-		if ($weekday >= 0)
-			$utime = strtotime("-$weekday day", $utime);
+		$utimeStart = strtotime("-$weekday day", $utime);
 		
-		var_dump($calendarid, $date, date('r T', $utime), Yii::app()->dateFormatter->formatDateTime($utime, 'long', 'long'));
+		var_dump($calendarid, $date, date('r T', $utime), date('r T', $utimeStart));
 	}
 	
 	/**
 	 * Show events for a specific day.
 	 */
 	public function actionDay($calendarid, $date=NULL) {
-		if ($date === NULL) $date = date('Y-m-d');
-		var_dump($calendarid, $date);
+		$utime = $this->dateToUTime($date, date('Y-m-d'));
+		
+		var_dump($calendarid, $date, date('r T', $utime), Yii::app()->dateFormatter->formatDateTime($utime, 'long', 'long'));
 	}
 	
 	/**
