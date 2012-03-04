@@ -17,6 +17,18 @@
 class WebApplication extends CWebApplication {
 	
 	/**
+	 * Initializes the application.
+	 * @see CWebApplication::init()
+	 */
+	protected function init() {
+		parent::init();
+		
+		// Make sure the loginUrl is an array
+		if (is_string($this->user->loginUrl))
+			$this->user->loginUrl = array(Yii::app()->user->loginUrl);
+	}
+	
+	/**
 	 * Displays the captured PHP error.
 	 * 
 	 * If the request is an AJAX request, then this method
@@ -32,6 +44,7 @@ class WebApplication extends CWebApplication {
 		if ($this->request->isAjaxRequest) {
 			$json = array(
 				'result'=>false,
+				'reason'=>'exception',
 				'exception'=>array(
 					'type'=>'php',
 					'code'=>$code,
@@ -57,6 +70,7 @@ class WebApplication extends CWebApplication {
 		if ($this->request->isAjaxRequest) {
 			$json = array(
 				'result'=>false,
+				'reason'=>'exception',
 				'exception'=>array(
 					'code'=>($exception instanceof CHttpException) ? $exception->statusCode : 500,
 					'type'=>get_class($exception),
