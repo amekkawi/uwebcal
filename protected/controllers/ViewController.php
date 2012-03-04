@@ -20,25 +20,10 @@ class ViewController extends Controller {
 			$_GET['calendarid'] = Yii::app()->params['defaultCalendarId'];
 		}
 		
-		if (!$this->loadCalendar($_GET['calendarid'])) {
-			$exception = new CHttpException(404, Yii::t('app', 'A calendar with the ID "{calendarid}" was not found.', array('{calendarid}' => $_GET['calendarid'])));
-			
-			// Output JSON for AJAX errors.
-			if (Yii::app()->request->isAjaxRequest) {
-				Yii::app()->displayException($exception);
-			}
-				
-			// Redirect the user to a custom URL, if specified.
-			elseif (Yii::app()->params['calendarNotFoundRedirect'] !== NULL) {
-				$this->redirect(Yii::app()->params['calendarNotFoundRedirect']);
-			}
-			
-			// Show a generic 404 page.
-			else {
-				throw $exception;
-			}
-			
-			exit;
+		$this->verifyCalendar();
+		
+		if ($this->calendar['htmlmode'] == Calendar::HTMLMODE_TEMPLATE) {
+			$this->layout = 'template';
 		}
 	}
 	
