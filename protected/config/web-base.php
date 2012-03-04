@@ -19,7 +19,7 @@ return array(
 		'defaultCalendarId'=>'default',
 		'defaultViewAction'=>'upcoming',
 		'calendarNotFoundRedirect'=>null,
-		'loginActions'=>array(),
+		'authActions'=>array(),
 		'userIdentities'=>array('DbUserIdentity')
 	),
 	
@@ -43,7 +43,7 @@ return array(
 		'user'=>array(
 			// enable cookie-based authentication
 			'allowAutoLogin'=>false,
-			'loginUrl'=>array('login'),
+			'loginUrl'=>array('auth/login'),
 			'authTimeout'=>1800,
 			'loginRequiredAjaxResponse'=>json_encode(array(
 				'result'=>false,
@@ -57,10 +57,10 @@ return array(
 			'rules'=>array(
 				'' => array('view', 'parsingOnly'=>true),
 				
-				'<calendarid>/login'=>'/login',
-				'<calendarid>/login/<action:\w+>'=>'/login/<action>',
-				'login'=>'/login',
-				'login/<action:\w+>'=>'/login/<action>',
+				'<calendarid>/<action:(login|logout)>'=>'/auth/<action>',
+				'<calendarid>/login/<action:\w+>'=>'/auth/<action>',
+				'<action:(login|logout)>'=>'/auth/<action>',
+				'login/<action:\w+>'=>'/auth/<action>',
 				
 				'<calendarid>' => 'view',
 				
