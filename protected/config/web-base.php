@@ -19,6 +19,8 @@ return array(
 		'defaultCalendarId'=>'default',
 		'defaultViewAction'=>'upcoming',
 		'calendarNotFoundRedirect'=>null,
+		'loginActions'=>array(),
+		'userIdentities'=>array('DbUserIdentity')
 	),
 	
 	// components to preload
@@ -40,9 +42,14 @@ return array(
 	'components'=>array(
 		'user'=>array(
 			// enable cookie-based authentication
-			'allowAutoLogin'=>true,
+			'allowAutoLogin'=>false,
+			'loginUrl'=>array('login'),
+			'authTimeout'=>1800,
+			'loginRequiredAjaxResponse'=>json_encode(array(
+				'result'=>false,
+				'reason'=>'loginrequired'
+			)),
 		),
-		
 		// uncomment the following to enable URLs in path-format
 		'urlManager'=>array(
 			'urlFormat'=>'path',
@@ -50,15 +57,21 @@ return array(
 			'rules'=>array(
 				// view/index routes.
 				'' => 'view',
+				
+				'<calendarid>/login'=>'/login',
+				'<calendarid>/login/<action:\w+>'=>'/login/<action>',
+				'login'=>'/login',
+				'login/<action:\w+>'=>'/login/<action>',
+				
 				'<calendarid>' => 'view',
-		
+				
 				// Short 'view' action routes.
 				'<calendarid>/<action:(upcoming|search|day|week|month)>'=>'/view/<action>',
 				'<calendarid>/<action:(day|week|month)>/<date:[0-9\-]+>'=>'/view/<action>',
 				'<calendarid>/event/<id>'=>'/view/event',
 		
-				'/export/rss/<calendarid>'=>array('/export/rss', 'urlSuffix'=>'.rss'),
-				'/export/ical/<calendarid>/<id>'=>array('/export/ical', 'urlSuffix'=>'.ical'),
+				'export/rss/<calendarid>'=>array('/export/rss', 'urlSuffix'=>'.rss'),
+				'export/ical/<calendarid>/<id>'=>array('/export/ical', 'urlSuffix'=>'.ical'),
 				
 				// Standard routes.
 				'<calendarid>/<controller:\w+>'=>'<controller>',
