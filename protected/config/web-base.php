@@ -11,11 +11,13 @@ return array(
 	'name'=>'UWebCal',
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
 	'defaultController'=>'view',
-
+	
 	// application-level parameters that can be accessed
 	// using Yii::app()->params['paramName']
 	'params'=>array(
-		'tablePrefix'=>'uwc_'
+		'defaultCalendarId'=>'default',
+		'defaultViewAction'=>'upcoming',
+		'calendarNotFoundRedirect'=>null,
 	),
 	
 	// components to preload
@@ -26,6 +28,7 @@ return array(
 		'application.models.*',
 		'application.components.*',
 		'application.components.auth.*',
+		'application.components.auth.rbac.*',
 	),
 
 	'modules'=>array(
@@ -66,11 +69,8 @@ return array(
 			),
 		),
 		'authManager'=>array(
-			'class'=>'CalDbAuthManager'
+			'class'=>'DbAuthManager'
 		),
-		'errorHandler'=>array(
-            'errorAction'=>'view/error',
-        ),
 		'log'=>array(
 			'class'=>'CLogRouter',
 			'routes'=>array(
