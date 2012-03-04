@@ -22,6 +22,12 @@ class ViewController extends Controller {
 		
 		$this->verifyCalendar();
 		
+		if ($this->calendar['viewauthrequired'] != 0 && Yii::app()->user->isGuest) {
+			Yii::app()->user->setFlash("viewauthrequired", Yii::t('app', 'The "{calendar}" calendar requires you to log in before viewing events.', array('{calendar}' => $this->calendar['name'])));
+			Yii::app()->user->loginUrl['calendarid'] = $_GET['calendarid'];
+			Yii::app()->user->loginRequired();
+		}
+		
 		if ($this->calendar['htmlmode'] == Calendar::HTMLMODE_TEMPLATE) {
 			$this->layout = 'template';
 		}
