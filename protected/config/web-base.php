@@ -15,6 +15,7 @@ return array(
 	// application-level parameters that can be accessed
 	// using Yii::app()->params['paramName']
 	'params'=>array(
+		'timezone'=>'UTC',
 		'defaultCalendarId'=>'default',
 		'defaultViewAction'=>'upcoming',
 		'calendarNotFoundRedirect'=>null,
@@ -52,7 +53,7 @@ return array(
 				'<calendarid>' => 'view',
 		
 				// Short 'view' action routes.
-				'<calendarid>/<action:(upcoming|search)>'=>'/view/<action>',
+				'<calendarid>/<action:(upcoming|search|day|week|month)>'=>'/view/<action>',
 				'<calendarid>/<action:(day|week|month)>/<date:[0-9\-]+>'=>'/view/<action>',
 				'<calendarid>/event/<id>'=>'/view/event',
 		
