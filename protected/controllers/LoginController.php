@@ -21,5 +21,11 @@ class LoginController extends Controller {
 	
 	public function actionLogout() {
 		Yii::app()->user->logout();
+		if ($this->calendar !== NULL) {
+			$this->redirect(Yii::app()->createUrl('view', array('calendarid' => $this->calendar['calendarid'])));
+		}
+		else {
+			$this->redirect(Yii::app()->createUrl('login'));
+		}
 	}
 }

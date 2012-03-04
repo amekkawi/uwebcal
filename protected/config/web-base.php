@@ -55,8 +55,7 @@ return array(
 			'urlFormat'=>'path',
 			'showScriptName'=>false,
 			'rules'=>array(
-				// view/index routes.
-				'' => 'view',
+				'' => array('view', 'parsingOnly'=>true),
 				
 				'<calendarid>/login'=>'/login',
 				'<calendarid>/login/<action:\w+>'=>'/login/<action>',
