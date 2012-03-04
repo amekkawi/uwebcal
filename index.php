@@ -37,4 +37,5 @@ if ((@include_once($yii)) === FALSE) {
 }
 
 $config = CMap::mergeArray($base, $local);
-Yii::createWebApplication($config)->run();
+require_once(dirname(__FILE__).'/protected/components/WebApplication.php');
+Yii::createApplication('WebApplication',$config)->run();
