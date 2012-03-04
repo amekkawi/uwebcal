@@ -1,9 +1,11 @@
 <?php
 /**
  * AuthAssignment class file.
- *
+ * 
+ * @author André Mekkawi <uwebcal@andremekkawi.com>
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @link http://www.yiiframework.com/
+ * @link http://www.uwebcal.com/
  * @copyright Copyright &copy; 2008-2011 Yii Software LLC
  * @license http://www.yiiframework.com/license/
  */
@@ -20,6 +22,8 @@
  * @property mixed $data Additional data for this assignment.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
+ * @author André Mekkawi <uwebcal@andremekkawi.com> 
+ * @package app.auth.rbac
  */
 class AuthAssignment extends CComponent
 {

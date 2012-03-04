@@ -29,6 +29,7 @@
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @author André Mekkawi <uwebcal@andremekkawi.com>
+ * @package app.auth.rbac
  */
 class AuthItem extends CComponent
 {

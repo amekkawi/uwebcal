@@ -34,6 +34,7 @@
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @author André Mekkawi <uwebcal@andremekkawi.com>
+ * @package app.auth.rbac
  */
 abstract class AuthManager extends CApplicationComponent implements ICalAuthManager
 {

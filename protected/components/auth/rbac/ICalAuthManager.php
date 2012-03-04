@@ -7,6 +7,7 @@
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @author André Mekkawi <uwebcal@andremekkawi.com>
  * @link http://www.uwebcal.com/
+ * @package app.auth.rbac
  */
 interface ICalAuthManager
 {
@@ -58,13 +59,13 @@ interface ICalAuthManager
 	public function getAuthItems($calendarId,$type=null,$userId=null);
 	/**
 	 * Returns the authorization item with the specified name.
+	 * @param string $calendarId the calendar ID
 	 * @param string $name the name of the item
 	 * @return AuthItem the authorization item. Null if the item cannot be found.
 	 */
 	public function getAuthItem($calendarId,$name);
 	/**
 	 * Saves an authorization item to persistent storage.
-	 * @param string $calendarId the calendar ID
 	 * @param AuthItem $item the item to be saved.
 	 * @param string $oldName the old item name. If null, it means the item name is not changed.
 	 */
