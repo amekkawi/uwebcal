@@ -41,7 +41,7 @@ return array(
 	// application components
 	'components'=>array(
 		'user'=>array(
-			// enable cookie-based authentication
+			'class'=>'WebUser',
 			'allowAutoLogin'=>false,
 			'loginUrl'=>array('auth/login'),
 			'authTimeout'=>1800,
@@ -55,8 +55,6 @@ return array(
 			'urlFormat'=>'path',
 			'showScriptName'=>false,
 			'rules'=>array(
-				'' => array('view', 'parsingOnly'=>true),
-				
 				'<calendarid>/<action:(login|logout)>'=>'/auth/<action>',
 				'<calendarid>/login/<action:\w+>'=>'/auth/<action>',
 				'<action:(login|logout)>'=>'/auth/<action>',
@@ -82,7 +80,10 @@ return array(
 			),
 		),
 		'authManager'=>array(
-			'class'=>'DbAuthManager'
+			'class'=>'DbAuthManager',
+			'itemTable'=>'{{authitems}}',
+			'assignmentTable'=>'{{authassignments}}',
+			'itemChildTable'=>'{{authitemchildren}}',
 		),
 		'log'=>array(
 			'class'=>'CLogRouter',
