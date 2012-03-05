@@ -31,7 +31,10 @@ class ViewController extends Controller {
 				$user->loginUrl['calendarid'] = $_GET['calendarid'];
 				$user->loginRequired();
 			}
-			elseif ($viewAuth == Calendar::VIEWAUTH_HASROLE && !$user->hasAuthAssignment($this->calendar['calendarid'])) {
+			elseif ($viewAuth == Calendar::VIEWAUTH_HASROLE
+			&& !$user->checkCalendarAccess($this->calendar['calendarid'], 'view')
+			&& !$user->checkAccess('view')) {
+				
 				$exception = new CHttpException(401, Yii::t('app','You do not have access to the "{calendarid}" calendar".', array('{calendarid}'=>$this->calendar['calendarid'])));
 				
 				// Output JSON for AJAX errors.
