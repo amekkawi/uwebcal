@@ -1,5 +1,13 @@
 <?php
 class WebUser extends CWebUser {
+	
+	const CACHE_KEY = '__checkcache';
+	
+	/**
+	 * @var integer The number of minutes till the checkAccess() session cache expires.
+	 */
+	public $cacheMinutes = 5;
+	
 	/**
 	 * Performs access check for this user.
 	 * @param string $operation the name of the operation that need access check.
@@ -31,9 +39,39 @@ class WebUser extends CWebUser {
 	 * @return boolean whether the operations can be performed by this user.
 	 */
 	public function checkCalendarAccess($calendarId,$operation,$params=array(),$allowCaching=true) {
-		// TODO: cache successful checks in the session, except for admin operations (calendarId='*').
+		
 		// TODO: cache admin operations in _access like CWebUser::checkaccess.
-		return Yii::app()->getAuthManager()->checkAccess($operation,$this->getId(),$params);
+		
+		// Check if operation check is already cached.
+		if ($allowCaching && $calendarId != '*') {
+			$cache = $this->getState(self::CACHE_KEY);
+			
+			// Reset the cache if it expired.
+			if (isset($cache['__expiration']) && $cache['__expiration'] < time())
+				$this->setState(self::CACHE_KEY, $cache = NULL); //$cache = 
+			
+			elseif (isset($cache[$calendarId][$operation]))
+				return $cache[$calendarId][$operation];
+		}
+		
+		$check = $operation == 'view'
+			? $this->hasAuthAssignment($calendarId)
+			: Yii::app()->getAuthManager()->checkAccess($calendarId,$operation,$this->getId(),$params);
+		
+		/*if($allowCaching && $params===array() && isset($this->_access[$operation]))
+			return $this->_access[$operation];
+		else
+			return $this->_access[$operation]=Yii::app()->getAuthManager()->checkAccess($operation,$this->getId(),$params);*/
+		if ($allowCaching && $calendarId != '*' && $params === array()) {
+			if (!isset($cache['__expiration']))
+				$cache = array('__expiration' => time() + $this->cacheMinutes * 60);
+			
+			$cache[$calendarId][$operation] = $check;
+			
+			$this->setState(self::CACHE_KEY, $cache);
+		}
+		
+		return $check;
 	}
 	
 	/**
