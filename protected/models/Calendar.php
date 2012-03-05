@@ -19,6 +19,10 @@ class Calendar extends CActiveRecord {
 	const HTMLMODE_PARTS = 0;
 	const HTMLMODE_TEMPLATE = 1;
 	
+	const VIEWAUTH_NONE = 0;
+	const VIEWAUTH_AUTHENTICATED = 1;
+	const VIEWAUTH_HASROLE = 2;
+	
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
