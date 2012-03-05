@@ -394,6 +394,21 @@ class DbAuthManager extends AuthManager
 				'userid'=>$assignment->getUserId()
 			));
 	}
+	
+	/**
+	 * Return if the specified user has at least one assignment to the specified calendar.
+	 * 
+	 * @param string $calendarId the calendar ID
+	 * @param mixed $userId the user ID (see {@link IWebUser::getId})
+	 * @return boolean whether the user has an assignment to the specified calendar.
+	 */
+	public function hasAuthAssignment($calendarId, $userId) {
+		return ((int)$this->db->createCommand()
+			->select('count(*) as num')
+			->from($this->assignmentTable)
+			->where('calendarid=:calendarid AND userid=:userid', array(':calendarid'=>$calendarId,':userid'=>$userId))
+			->queryScalar()) > 0;
+	}
 
 	/**
 	 * Returns the authorization items of the specific type and user.

@@ -155,6 +155,15 @@ interface ICalAuthManager
 	 * @param AuthAssignment $assignment the assignment that has been changed.
 	 */
 	public function saveAuthAssignment($assignment);
+	
+	/**
+	 * Return if the specified user has at least one assignment to the specified calendar.
+	 * 
+	 * @param string $calendarId the calendar ID
+	 * @param mixed $userId the user ID (see {@link IWebUser::getId})
+	 * @return boolean whether the user has an assignment to the specified calendar.
+	 */
+	public function hasAuthAssignment($calendarId, $userId);
 
 	/**
 	 * Removes all authorization data.

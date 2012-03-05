@@ -166,4 +166,15 @@ abstract class AuthManager extends CApplicationComponent implements ICalAuthMana
 			throw new CException(Yii::t('yii','Cannot add an item of type "{child}" to an item of type "{parent}".',
 				array('{child}'=>$types[$childType], '{parent}'=>$types[$parentType])));
 	}
+	
+	/**
+	 * Return if the specified user has at least one assignment to the specified calendar.
+	 * 
+	 * @param string $calendarId the calendar ID
+	 * @param mixed $userId the user ID (see {@link IWebUser::getId})
+	 * @return boolean whether the user has an assignment to the specified calendar.
+	 */
+	public function hasAuthAssignment($calendarId, $userId) {
+		return count($this->getAuthAssignments($calendarId, $userId)) > 0;
+	}
 }
