@@ -52,25 +52,31 @@ return array(
 		'urlManager'=>array(
 			'urlFormat'=>'path',
 			'showScriptName'=>false,
+			'useStrictParsing'=>true,
+			'appendParams'=>false,
 			'rules'=>array(
+		
+				'' => array('events', 'parsingOnly'=>true),
+				
+				// Export Routes
+				//'export/rss/<calendarid>'=>array('/export/rss', 'urlSuffix'=>'.rss'),
+				//'export/ical/<calendarid>/<id>'=>array('/export/ical', 'urlSuffix'=>'.ical'),
+				
+				// Login Routes
 				'<calendarid>/<action:(login|logout)>'=>'/auth/<action>',
 				'<calendarid>/login/<action:\w+>'=>'/auth/<action>',
 				'<action:(login|logout)>'=>'/auth/<action>',
 				'login/<action:\w+>'=>'/auth/<action>',
 				
-				'<calendarid>' => 'events',
-				
 				// Short 'events' action routes.
-				'<calendarid>/<action:(upcoming|search|day|week|month)>'=>'/events/<action>',
 				'<calendarid>/<action:(day|week|month)>/<date:[0-9\-]+>'=>'/events/<action>',
+				'<calendarid>/<action:(upcoming|search|day|week|month)>'=>'/events/<action>',
 				'<calendarid>/event/<id>'=>'/events/detail',
+				'<calendarid>' => 'events',
 		
-				'export/rss/<calendarid>'=>array('/export/rss', 'urlSuffix'=>'.rss'),
-				'export/ical/<calendarid>/<id>'=>array('/export/ical', 'urlSuffix'=>'.ical'),
-				
 				// Standard routes.
-				'<calendarid>/<controller:\w+>'=>'<controller>',
-				'<calendarid>/<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
+				//'<calendarid>/<controller:\w+>'=>'<controller>',
+				//'<calendarid>/<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
 		
 				//'<controller:\w+>/<id:\d+>'=>'<controller>/events',
 				//'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
