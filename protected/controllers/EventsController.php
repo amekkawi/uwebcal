@@ -40,7 +40,7 @@ class EventsController extends Controller {
 				// Output JSON for AJAX errors.
 				if (Yii::app()->request->isAjaxRequest) {
 					Yii::app()->displayException($exception);
-					exit;
+					Yii::app()->end();
 				}
 					
 				// Show a generic 401 page.

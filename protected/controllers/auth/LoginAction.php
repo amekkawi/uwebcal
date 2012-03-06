@@ -10,7 +10,7 @@ class LoginAction extends CAction {
 							'name'=>Yii::app()->user->name,
 							'id'=>Yii::app()->user->id
 						)));
-						exit;
+						Yii::app()->end();
 					}
 					else {
 						$returnUrl = Yii::app()->user->returnUrl;
@@ -38,7 +38,7 @@ class LoginAction extends CAction {
 						'reason'=>'failedstandardauth',
 						'message'=> Yii::t('app', 'The username or password you entered is incorrect.')
 					)));
-					exit;
+					Yii::app()->end();
 				}
 				
 				Yii::app()->user->setFlash('failedstandardauth', Yii::t('app', 'The username or password you entered is incorrect.'));

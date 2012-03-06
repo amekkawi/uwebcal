@@ -55,7 +55,7 @@ class Controller extends CController {
 			// Output JSON for AJAX errors.
 			if (Yii::app()->request->isAjaxRequest) {
 				Yii::app()->displayException($exception);
-				exit;
+				Yii::app()->end();
 			}
 				
 			// Redirect the user to a custom URL, if specified.
