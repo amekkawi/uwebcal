@@ -2,7 +2,7 @@
 class AuthController extends Controller {
 	
 	public function init() {
-		$this->checkCalendarAccess();
+		$this->initCalendar();
 		
 		Yii::app()->clientScript->registerMetaTag('noindex,nofollow', 'robots');
 	}
