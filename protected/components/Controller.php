@@ -18,10 +18,6 @@
  * @package app.web
  */
 class Controller extends CController {
-	/**
-	 * @var string the default layout for the controller view. Defaults to 'html'.
-	 */
-	public $layout = 'html';
 	
 	private $_calendar;
 	private $_calendarAR;

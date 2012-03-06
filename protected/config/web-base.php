@@ -13,9 +13,7 @@
  */
 
 return array(
-	'name'=>'UWebCal',
-	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-	'defaultController'=>'events',
+	'name'=>'My Calendar',
 	
 	// application-level parameters that can be accessed
 	// using Yii::app()->params['paramName']

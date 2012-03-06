@@ -17,6 +17,17 @@
 class WebApplication extends CWebApplication {
 	
 	/**
+	 * @return string the route of the default controller, action or module. Defaults to 'events'.
+	 */
+	public $defaultController = 'events';
+	
+	/**
+	 * @var mixed the application-wide layout. Defaults to 'http' (relative to {@link getLayoutPath layoutPath}).
+	 * If this is false, then no layout will be used.
+	 */
+	public $layout = 'html';
+	
+	/**
 	 * @var string The timezone that dates will be displayed in. The default is 'UTC'.
 	 *             Dates are always stored in the database in UTC.
 	 */
