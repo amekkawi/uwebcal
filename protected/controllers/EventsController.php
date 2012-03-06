@@ -20,39 +20,7 @@ class EventsController extends Controller {
 			$_GET['calendarid'] = Yii::app()->defaultCalendarId;
 		}
 		
-		$this->verifyCalendar();
-		
-		$user = Yii::app()->user;
-		$viewAuth = (int)$this->calendar['viewauth'];
-		
-		if ($viewAuth > Calendar::VIEWAUTH_NONE) {
-			if ($user->isGuest) {
-				$user->setFlash("viewauth", Yii::t('app', 'The "{calendar}" calendar requires you to log in before viewing events.', array('{calendar}' => $this->calendar['name'])));
-				$user->loginUrl['calendarid'] = $_GET['calendarid'];
-				$user->loginRequired();
-			}
-			elseif ($viewAuth == Calendar::VIEWAUTH_HASROLE
-			&& !$user->checkCalendarAccess($this->calendar['calendarid'], 'view')
-			&& !$user->checkAccess('view')) {
-				
-				$exception = new CHttpException(401, Yii::t('app','You do not have access to the "{calendarid}" calendar".', array('{calendarid}'=>$this->calendar['calendarid'])));
-				
-				// Output JSON for AJAX errors.
-				if (Yii::app()->request->isAjaxRequest) {
-					Yii::app()->displayException($exception);
-					Yii::app()->end();
-				}
-					
-				// Show a generic 401 page.
-				else {
-					throw $exception;
-				}
-			}
-		}
-		
-		if ($this->calendar['htmlmode'] == Calendar::HTMLMODE_TEMPLATE) {
-			$this->layout = 'template';
-		}
+		$this->checkCalendarAccess();
 	}
 	
 	/**

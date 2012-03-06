@@ -45,10 +45,9 @@ class Controller extends CController {
 	 * If $_GET['calendarid'] is set, and the calendar does not exist, then
 	 * this method will halt execution after displaying an error or redirecting.
 	 * 
-	 * @return boolean true if $_GET['calendarid'] is set, false otherwise.
 	 * @throws CHttpException
 	 */
-	protected function verifyCalendar() {
+	protected function initCalendar() {
 		if (isset($_GET['calendarid']) && $this->getCalendar() === NULL) {
 			$exception = new CHttpException(404, Yii::t('app', 'A calendar with the ID "{calendarid}" was not found.', array('{calendarid}' => $_GET['calendarid'])));
 			
@@ -69,7 +68,43 @@ class Controller extends CController {
 			}
 		}
 		
-		return isset($_GET['calendarid']);
+		// Configure the controller based on calendar settings.
+		if ($this->calendar['htmlmode'] == Calendar::HTMLMODE_TEMPLATE) {
+			$this->layout = 'template';
+		}
+	}
+	
+	protected function checkCalendarAccess() {
+		$this->initCalendar();
+		
+		if (isset($_GET['calendarid'])) {
+			$user = Yii::app()->user;
+			$viewAuth = (int)$this->calendar['viewauth'];
+			
+			if ($viewAuth > Calendar::VIEWAUTH_NONE) {
+				if ($user->isGuest) {
+					$user->setFlash("viewauth", Yii::t('app', 'This calendar requires you to log in.'));
+					$user->loginRequired();
+				}
+				elseif ($viewAuth == Calendar::VIEWAUTH_HASROLE
+				&& !$user->checkCalendarAccess($this->calendar['calendarid'], 'view')
+				&& !$user->checkAccess('view')) {
+					
+					$exception = new CHttpException(401, Yii::t('app','You do not have access to this calendar".'));
+					
+					// Output JSON for AJAX errors.
+					if (Yii::app()->request->isAjaxRequest) {
+						Yii::app()->displayException($exception);
+						Yii::app()->end();
+					}
+						
+					// Show a generic 401 page.
+					else {
+						throw $exception;
+					}
+				}
+			}
+		}
 	}
 	
 	/**

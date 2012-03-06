@@ -2,11 +2,7 @@
 class AuthController extends Controller {
 	
 	public function init() {
-		$this->verifyCalendar();
-		
-		if ($this->calendar['htmlmode'] == Calendar::HTMLMODE_TEMPLATE) {
-			$this->layout = 'template';
-		}
+		$this->checkCalendarAccess();
 		
 		Yii::app()->clientScript->registerMetaTag('noindex,nofollow', 'robots');
 	}
