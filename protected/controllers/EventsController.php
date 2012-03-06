@@ -1,6 +1,6 @@
 <?php
 /**
- * ViewController class file.
+ * EventsController class file.
  *
  * @author André Mekkawi <uwebcal@andremekkawi.com>
  * @link http://www.uwebcal.com/
@@ -9,11 +9,11 @@
  */
 
 /**
- * The View controller handles non-administrative viewing of events.
+ * The EventsController handles non-administrative viewing of events.
  * @author André Mekkawi <uwebcal@andremekkawi.com>
  * @package app.web
  */
-class ViewController extends Controller {
+class EventsController extends Controller {
 	
 	public function init() {
 		if (!isset($_GET['calendarid'])) {
@@ -59,7 +59,7 @@ class ViewController extends Controller {
 	 * Default action to handle URLs that do not specify the calendar ID.
 	 */
 	public function actionIndex($calendarid) {
-		$this->forward('/view/' . ($this->calendar['defaultview'] !== NULL ? $this->calendar['defaultview'] : Yii::app()->params['defaultViewAction']));
+		$this->forward('/events/' . ($this->calendar['defaultview'] !== NULL ? $this->calendar['defaultview'] : Yii::app()->params['defaultViewAction']));
 	}
 	
 	/**
@@ -125,7 +125,7 @@ class ViewController extends Controller {
 	/**
 	 * Show a specific event's details.
 	 */
-	public function actionEvent() {
+	public function actionDetail() {
 		var_dump($_GET);
 	}
 }

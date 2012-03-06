@@ -24,7 +24,7 @@ class LoginAction extends CAction {
 							$this->controller->redirect($returnUrl);
 						}
 						elseif ($this->controller->calendar !== NULL) {
-							$this->controller->redirect(Yii::app()->createUrl('view', array('calendarid' => $this->controller->calendar['calendarid'])));
+							$this->controller->redirect(Yii::app()->createUrl('events', array('calendarid' => $this->controller->calendar['calendarid'])));
 						}
 						else {
 							$this->controller->redirect(Yii::app()->homeUrl);
@@ -47,7 +47,7 @@ class LoginAction extends CAction {
 			$this->controller->render('standard');
 		}
 		elseif ($this->controller->calendar !== NULL) {
-			$this->controller->redirect(Yii::app()->createUrl('view', array('calendarid' => $this->controller->calendar['calendarid'])));
+			$this->controller->redirect(Yii::app()->createUrl('events', array('calendarid' => $this->controller->calendar['calendarid'])));
 		}
 		else {
 			$this->controller->redirect(Yii::app()->baseUrl);

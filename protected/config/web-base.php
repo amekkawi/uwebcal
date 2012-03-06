@@ -10,7 +10,7 @@ $yii = dirname(__FILE__).'/../../framework/yii.php';
 return array(
 	'name'=>'UWebCal',
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-	'defaultController'=>'view',
+	'defaultController'=>'events',
 	
 	// application-level parameters that can be accessed
 	// using Yii::app()->params['paramName']
@@ -60,12 +60,12 @@ return array(
 				'<action:(login|logout)>'=>'/auth/<action>',
 				'login/<action:\w+>'=>'/auth/<action>',
 				
-				'<calendarid>' => 'view',
+				'<calendarid>' => 'events',
 				
-				// Short 'view' action routes.
-				'<calendarid>/<action:(upcoming|search|day|week|month)>'=>'/view/<action>',
-				'<calendarid>/<action:(day|week|month)>/<date:[0-9\-]+>'=>'/view/<action>',
-				'<calendarid>/event/<id>'=>'/view/event',
+				// Short 'events' action routes.
+				'<calendarid>/<action:(upcoming|search|day|week|month)>'=>'/events/<action>',
+				'<calendarid>/<action:(day|week|month)>/<date:[0-9\-]+>'=>'/events/<action>',
+				'<calendarid>/event/<id>'=>'/events/detail',
 		
 				'export/rss/<calendarid>'=>array('/export/rss', 'urlSuffix'=>'.rss'),
 				'export/ical/<calendarid>/<id>'=>array('/export/ical', 'urlSuffix'=>'.ical'),
@@ -74,7 +74,7 @@ return array(
 				'<calendarid>/<controller:\w+>'=>'<controller>',
 				'<calendarid>/<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
 		
-				//'<controller:\w+>/<id:\d+>'=>'<controller>/view',
+				//'<controller:\w+>/<id:\d+>'=>'<controller>/events',
 				//'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
 				//'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
 			),

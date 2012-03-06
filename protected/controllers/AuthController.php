@@ -26,7 +26,7 @@ class AuthController extends Controller {
 		Yii::app()->user->logout();
 		
 		if ($this->calendar !== NULL) {
-			$this->redirect(Yii::app()->createUrl('view', array('calendarid' => $this->calendar['calendarid'])));
+			$this->redirect(Yii::app()->createUrl('events', array('calendarid' => $this->calendar['calendarid'])));
 		}
 		else {
 			$this->redirect(Yii::app()->createUrl('auth/login'));
