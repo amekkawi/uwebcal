@@ -7,6 +7,8 @@ class AuthController extends Controller {
 		if ($this->calendar['htmlmode'] == Calendar::HTMLMODE_TEMPLATE) {
 			$this->layout = 'template';
 		}
+		
+		Yii::app()->clientScript->registerMetaTag('noindex,nofollow', 'robots');
 	}
 	
 	public function actions() {
@@ -14,7 +16,7 @@ class AuthController extends Controller {
 			array(
 				'login' => 'application.controllers.auth.LoginAction'
 			),
-			Yii::app()->authActions 
+			Yii::app()->authActions
 		);
 	}
 	
