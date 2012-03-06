@@ -84,4 +84,19 @@ class WebUser extends CWebUser {
 	public function hasAuthAssignment($calendarId='*') {
 		return Yii::app()->getAuthManager()->hasAuthAssignment($calendarId, $this->getId());
 	}
+	
+	/**
+	 * Redirects the user browser to the login page.
+	 * This will set the calendarid to {@link loginUrl}, or remove it if the calendarid is not set.
+	 * After calling this method, the current request processing will be terminated.
+	 * @see CWebUser::loginRequired
+	 */
+	public function loginRequired() {
+		if (isset($_GET['calendarid']))
+			$this->loginUrl['calendarid'] = $_GET['calendarid'];
+		else
+			unset($this->loginUrl['calendarid']);
+		
+		parent::loginRequired();
+	}
 }
