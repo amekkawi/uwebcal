@@ -1,4 +1,8 @@
-<?php header('Content-Type: text/html; charset=UTF-8'); ?>
+<?php
+header('Content-Type: text/html; charset=UTF-8');
+if (Yii::app()->clientScriptPackage !== NULL)
+	Yii::app()->clientScript->registerPackage(Yii::app()->clientScriptPackage);
+?>
 <!DOCTYPE HTML>
 <html>
 <head>

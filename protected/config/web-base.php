@@ -15,12 +15,6 @@
 return array(
 	'name'=>'My Calendar',
 	
-	// application-level parameters that can be accessed
-	// using Yii::app()->params['paramName']
-	'params'=>array(
-		
-	),
-	
 	// components to preload
 	'preload'=>array('log'),
 
@@ -32,12 +26,33 @@ return array(
 		'application.components.auth.rbac.*',
 	),
 
-	'modules'=>array(
-		
-	),
-
 	// application components
 	'components'=>array(
+		'clientScript'=>array(
+			'packages'=>array(
+				'app'=>array(
+					'baseUrl'=>'',
+					'depends'=>array('app.css','app.js')
+				),
+				'app.css'=>array(
+					'baseUrl'=>'css',
+					'css'=>array(),
+					'depends'=>array('yui3.css')
+				),
+				'app.js'=>array(
+					'baseUrl'=>'js',
+					'js'=>array(),
+				),
+				'yui3'=>array(
+					'baseUrl'=>'',
+					'depends'=>array('yui3.css')
+				),
+				'yui3.css'=>array(
+					'baseUrl'=>'http://yui.yahooapis.com/3.4.1/build/',
+					'css'=>array('cssreset-context/cssreset-context-min.css','cssfonts-context/cssfonts-context-min.css','cssbase-context/cssbase-context-min.css','cssgrids/grids-min.css')
+				)
+			)
+		),
 		'user'=>array(
 			'class'=>'WebUser',
 			'allowAutoLogin'=>false,

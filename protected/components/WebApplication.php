@@ -65,6 +65,12 @@ class WebApplication extends CWebApplication {
 	public $userIdentities = array('DbUserIdentity');
 	
 	/**
+	 * @var string|null The name of the package to load via {@link CClientScript::registerPackage}.
+	 *                  The package is registered in layout files. Set to null to skip registration.
+	 */
+	public $clientScriptPackage = 'app';
+	
+	/**
 	 * Initializes the application.
 	 * @see CWebApplication::init()
 	 */
