@@ -63,8 +63,8 @@ class Controller extends CController {
 			}
 				
 			// Redirect the user to a custom URL, if specified.
-			elseif (Yii::app()->params['calendarNotFoundRedirect'] !== NULL) {
-				$this->redirect(Yii::app()->params['calendarNotFoundRedirect']);
+			elseif (Yii::app()->calendarNotFoundRedirect !== NULL) {
+				$this->redirect(Yii::app()->calendarNotFoundRedirect);
 			}
 			
 			// Show a generic 404 page.

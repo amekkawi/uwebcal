@@ -14,7 +14,7 @@ class AuthController extends Controller {
 			array(
 				'login' => 'application.controllers.auth.LoginAction'
 			),
-			Yii::app()->params['authActions'] 
+			Yii::app()->authActions 
 		);
 	}
 	
@@ -42,7 +42,7 @@ class AuthController extends Controller {
 	 * @return boolean true if we successfully authenticated and logged in the user, otherwise false.
 	 */
 	public function attemptStandardLogin($username, $password) {
-		foreach (Yii::app()->params['userIdentities'] as $identityClass) {
+		foreach (Yii::app()->userIdentities as $identityClass) {
 			$identity = new $identityClass($username, $password);
 			if ($identity->authenticate()) {
 				return Yii::app()->user->login($identity);

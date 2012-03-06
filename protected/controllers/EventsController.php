@@ -17,7 +17,7 @@ class EventsController extends Controller {
 	
 	public function init() {
 		if (!isset($_GET['calendarid'])) {
-			$_GET['calendarid'] = Yii::app()->params['defaultCalendarId'];
+			$_GET['calendarid'] = Yii::app()->defaultCalendarId;
 		}
 		
 		$this->verifyCalendar();
@@ -59,7 +59,7 @@ class EventsController extends Controller {
 	 * Default action to handle URLs that do not specify the calendar ID.
 	 */
 	public function actionIndex($calendarid) {
-		$this->forward('/events/' . ($this->calendar['defaultview'] !== NULL ? $this->calendar['defaultview'] : Yii::app()->params['defaultViewAction']));
+		$this->forward('/events/' . ($this->calendar['defaultview'] !== NULL ? $this->calendar['defaultview'] : Yii::app()->defaultViewAction));
 	}
 	
 	/**

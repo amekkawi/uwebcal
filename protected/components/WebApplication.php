@@ -17,6 +17,43 @@
 class WebApplication extends CWebApplication {
 	
 	/**
+	 * @var string The timezone that dates will be displayed in. The default is 'UTC'.
+	 *             Dates are always stored in the database in UTC.
+	 */
+	public $timezone = 'UTC';
+	
+	/**
+	 * @var string The default calendar ID.
+	 */
+	public $defaultCalendarId = 'main';
+	
+	/**
+	 * @var string The default 'events' view (i.e. 'upcoming', 'day')
+	 */
+	public $defaultViewAction = 'upcoming';
+	
+	/**
+	 * @var string|null A URL to redirect users to if they attempt to view a calendar that
+	 *                  does not exist. If set to null, a 404 page will be shown.
+	 */
+	public $calendarNotFoundRedirect = NULL;
+	
+	/**
+	 * @var array 
+	 */
+	public $eventsActions = array();
+	
+	/**
+	 * @var array 
+	 */
+	public $authActions = array();
+	
+	/**
+	 * @var array 
+	 */
+	public $userIdentities = array('DbUserIdentity');
+	
+	/**
 	 * Initializes the application.
 	 * @see CWebApplication::init()
 	 */
