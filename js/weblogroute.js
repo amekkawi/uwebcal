@@ -7,7 +7,7 @@ window.WEBLOGROUTE = function($, data) {
 
 	var resize = function() {
 		if (details.is(':visible'))
-			details.css('max-height', ($(window).innerHeight() - details.position().top - (main.outerHeight(true) - main.innerHeight()) - main.position().top * 2) + 'px');
+			details.css('max-height', ($(window).innerHeight() - details.position().top - (main.outerHeight(true) - main.innerHeight()) - 4) + 'px');
 	};
 
 	var categoryComparator = function(a, b) {
