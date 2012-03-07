@@ -20,9 +20,11 @@ if ($this instanceof Controller)
 
 if ($this instanceof Controller)
 	$this->echoHtmlPart('header');
+?>
 
-echo $content;
+<div id="UWebCal" class="yui3-cssreset yui3-cssfonts yui3-cssbase"><?php echo $content; ?></div>
 
+<?php
 if ($this instanceof Controller)
 	$this->echoHtmlPart('footer');
 
