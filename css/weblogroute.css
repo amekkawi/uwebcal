@@ -1,0 +1,63 @@
+#WebLogWindow {
+	position: fixed;
+	top: 2px;
+	right: 2px;
+	border: 2px solid #666;
+	backgroundColor: #F6F6F6;
+}
+#WebLogWindow .toggle {
+	background-color: #EEE;
+	padding: 6px;
+	cursor: pointer;
+}
+#WebLogWindow .details {
+	width: 600px;
+	max-height: 500px;
+	overflow: auto;
+}
+#WebLogWindow .label {
+	font-size: 125%;
+	color: #060;
+}
+#WebLogWindow .profile, #WebLogWindow .log, #WebLogWindow .trace {
+	background-position: 4px 2px;
+	background-repeat: no-repeat;
+	border-left: 5px solid #090;
+}
+#WebLogWindow .profile {
+	border-left-color: #C00;
+}
+#WebLogWindow .profile .label {
+	color: #C00;
+}
+#WebLogWindow .trace {
+	border-left-color: #00C;
+}
+#WebLogWindow .trace .label {
+	color: #009;
+}
+#WebLogWindow .entry {
+	margin: 6px;
+	padding-left: 4px;
+}
+#WebLogWindow .tracelog {
+	color: #666;
+}
+#WebLogWindow .etime {
+	font-size: 125%;
+	padding: 6px 6px 0 14px;
+}
+
+#WebLogWindow .categorylinks {
+	font-size: 125%;
+	padding: 6px 6px 0 14px;
+}
+
+#WebLogWindow .hideentries .entry {
+	display: none;
+}
+
+#WebLogWindow .parent span, #WebLogWindow .child {
+	color: #00F;
+	text-decoration: underline;
+}
