@@ -24,6 +24,7 @@ return array(
 		'application.components.*',
 		'application.components.auth.*',
 		'application.components.auth.rbac.*',
+		'application.components.fields.*',
 	),
 
 	// application components
