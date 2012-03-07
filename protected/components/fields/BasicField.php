@@ -20,9 +20,12 @@ class BasicField extends BaseField {
 	private $_name;
 	private $_id;
 	
-	public function __constructor($id, $name) {
-		$this->_id = $id;
+	public function setName($name) {
 		$this->_name = $name;
+	}
+	
+	public function setId($id) {
+		$this->_id = $id;
 	}
 	
 	public function getName() {

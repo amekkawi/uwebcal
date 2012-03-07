@@ -94,7 +94,7 @@ abstract class BaseField extends CComponent {
 	 * 
 	 * @return array The values to be stored.
 	 */
-	abstract public function getDataValues() {
+	public function getDataValues() {
 		return array();
 	}
 	
