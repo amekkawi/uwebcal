@@ -19,7 +19,7 @@ class WebLogRoute extends CLogRoute {
 		if (Yii::app() instanceof WebApplication && !Yii::app()->getRequest()->getIsAjaxRequest()) {
 		?><style>
 		#WebLogWindow {
-			position: absolute;
+			position: fixed;
 			top: 2px;
 			right: 2px;
 			border: 2px solid #666;
@@ -84,6 +84,11 @@ class WebLogRoute extends CLogRoute {
 			
 			var htmlencode = function(text) {
 				return $('<div></div>').text(text + '').html().replace(/[\r\n]+/g, '<br/>');
+			};
+
+			var resize = function() {
+				if (details.is(':visible'))
+					details.css('max-height', ($(window).innerHeight() - details.position().top - (main.outerHeight(true) - main.innerHeight()) - main.position().top * 2) + 'px');
 			};
 
 			var categoryComparator = function(a, b) {
@@ -188,6 +193,7 @@ class WebLogRoute extends CLogRoute {
 						borderBottom: '1px solid #666',
 						fontSize: '125%'
 					});
+					resize();
 				}, function() {
 					details.hide();
 					toggle.css({
@@ -208,6 +214,10 @@ class WebLogRoute extends CLogRoute {
 					selectCategory();
 				})
 				.appendTo(main);
+
+			$(window).resize(function() {
+				resize();
+			});
 		})(jQuery);
 		
 		</script><?php
