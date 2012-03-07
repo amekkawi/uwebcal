@@ -36,7 +36,7 @@ return array(
 				),
 				'app.css'=>array(
 					'baseUrl'=>'css',
-					'css'=>array(),
+					'css'=>array('base.css'),
 					'depends'=>array('yui3.css')
 				),
 				'app.js'=>array(
@@ -49,7 +49,12 @@ return array(
 				),
 				'yui3.css'=>array(
 					'baseUrl'=>'http://yui.yahooapis.com/3.4.1/build/',
-					'css'=>array('cssreset-context/cssreset-context-min.css','cssfonts-context/cssfonts-context-min.css','cssbase-context/cssbase-context-min.css','cssgrids/grids-min.css')
+					'css'=>array(
+						'cssreset-context/cssreset-context-min.css',
+						'cssfonts-context/cssfonts-context-min.css',
+						'cssbase-context/cssbase-context-min.css',
+						'cssgrids/grids-min.css'
+					)
 				)
 			)
 		),
