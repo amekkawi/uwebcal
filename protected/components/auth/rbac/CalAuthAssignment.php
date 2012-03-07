@@ -1,6 +1,6 @@
 <?php
 /**
- * AuthAssignment class file.
+ * CalAuthAssignment class file.
  * 
  * @author André Mekkawi <uwebcal@andremekkawi.com>
  * @author Qiang Xue <qiang.xue@gmail.com>
@@ -11,9 +11,9 @@
  */
 
 /**
- * AuthAssignment represents an assignment of a role to a user.
+ * CalAuthAssignment represents an assignment of a role to a user.
  * It includes additional assignment information such as {@link bizRule} and {@link data}.
- * Do not create a AuthAssignment instance using the 'new' operator.
+ * Do not create a CalAuthAssignment instance using the 'new' operator.
  * Instead, call {@link ICalAuthManager::assign}.
  *
  * @property mixed $userId User ID (see {@link IWebUser::getId}).
@@ -25,7 +25,7 @@
  * @author André Mekkawi <uwebcal@andremekkawi.com> 
  * @package app.auth.rbac
  */
-class AuthAssignment extends CComponent
+class CalAuthAssignment extends CComponent
 {
 	private $_auth;
 	private $_calendarId;

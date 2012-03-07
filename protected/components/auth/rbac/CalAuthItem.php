@@ -1,6 +1,6 @@
 <?php
 /**
- * AuthItem class file.
+ * CalAuthItem class file.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @author André Mekkawi <uwebcal@andremekkawi.com>
@@ -11,11 +11,11 @@
  */
 
 /**
- * AuthItem represents an authorization item.
+ * CalAuthItem represents an authorization item.
  * An authorization item can be an operation, a task or a role.
  * They form an authorization hierarchy. Items on higher levels of the hierarchy
  * inherit the permissions represented by items on lower levels.
- * A user may be assigned one or several authorization items (called {@link AuthAssignment assignments}.
+ * A user may be assigned one or several authorization items (called {@link CalAuthAssignment assignments}.
  * He can perform an operation only when it is among his assigned items.
  *
  * @property ICalAuthManager $authManager The authorization manager.
@@ -31,7 +31,7 @@
  * @author André Mekkawi <uwebcal@andremekkawi.com>
  * @package app.auth.rbac
  */
-class AuthItem extends CComponent
+class CalAuthItem extends CComponent
 {
 	const TYPE_OPERATION=0;
 	const TYPE_TASK=1;
@@ -90,7 +90,7 @@ class AuthItem extends CComponent
 			}
 		}
 		
-		Yii::trace('Checking permission "'.$this->_name.'"','application.components.auth.rbac.AuthItem');
+		Yii::trace('Checking permission "'.$this->_name.'"','application.components.auth.rbac.CalAuthItem');
 		if($this->_auth->executeBizRule($this->_bizRule,$params,$this->_data))
 		{
 			if($this->_name==$itemName)
@@ -260,7 +260,7 @@ class AuthItem extends CComponent
 	 * @param string $bizRule the business rule to be executed when {@link checkAccess} is called
 	 * for this particular authorization item.
 	 * @param mixed $data additional data associated with this assignment
-	 * @return AuthAssignment the authorization assignment information.
+	 * @return CalAuthAssignment the authorization assignment information.
 	 * @throws CException if the item has already been assigned to the user
 	 * @see ICalAuthManager::assign
 	 */
@@ -294,7 +294,7 @@ class AuthItem extends CComponent
 	/**
 	 * Returns the item assignment information.
 	 * @param mixed $userId the user ID (see {@link IWebUser::getId})
-	 * @return AuthAssignment the item assignment information. Null is returned if
+	 * @return CalAuthAssignment the item assignment information. Null is returned if
 	 * this item is not assigned to the user.
 	 * @see ICalAuthManager::getAuthAssignment
 	 */
