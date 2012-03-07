@@ -105,8 +105,6 @@ class WebLogRoute extends CLogRoute {
 					currTreeNode = currTreeNode[ns[n]];
 				}
 
-				console.log(tree);
-				
 				return classes;
 			};
 
@@ -130,14 +128,22 @@ class WebLogRoute extends CLogRoute {
 			};
 
 			var renderDetails = function() {
-				var html = [ ];
+				var html = [ ], profileStarts = {};
 				for (var i = 0; i < data.length; i++) {
-					var nsClasses = processNS(data[i][2]);
+					var profileExtra = '', nsClasses = processNS(data[i][2]);
+					
+					if (data[i][1] == 'profile') {
+						var profileKey = data[i][0].split(/:/, 2).slice(1);
+						if (profileKey in profileStarts)
+							profileExtra = ' +' + (data[i][3] - profileStarts[profileKey]);
+						else
+							profileStarts[profileKey] = data[i][3];
+					}
 
 					var split = data[i][0].split(/[\n\r]+/);
 					html.push('<div class="' + data[i][1] + ' ' + nsClasses.join(' ') + ' entry">'
 						+ '<span class="label">' + htmlencode(split.shift()) + '</span><br/>'
-						+ htmlencode(data[i][1] + ' (' + data[i][2] + ') ' + data[i][3]) + '<br/>'
+						+ htmlencode(data[i][1] + ' (' + data[i][2] + ') ' + data[i][3] + profileExtra) + '<br/>'
 						+ '<span class="tracelog">' + htmlencode(split.join("\n")) + '</span>'
 						+ '</div>');
 				}
@@ -150,7 +156,6 @@ class WebLogRoute extends CLogRoute {
 						
 				buildNSLinks();
 				$('head').append('<style>' + nsCSS.join("\n") + '</style>');
-				console.log(nsCSS);
 				renderDetails = function() {};
 			};
 			
