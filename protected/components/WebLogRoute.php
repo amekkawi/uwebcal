@@ -80,54 +80,68 @@ class WebLogRoute extends CLogRoute {
 		</style><script>
 		if (typeof jQuery != 'undefined' && jQuery.fn.disableTextSelection)
 			(function($){
-			var main, details, toggle, categoryCSS = [], tree = { }, data = <?php echo CJSON::encode($logs); ?>, etime = <?php echo Yii::getLogger()->getExecutionTime(); ?>;
+			var main, details, toggle, categoryList = [], categoryCSS = [], data = <?php echo CJSON::encode($logs); ?>, etime = <?php echo Yii::getLogger()->getExecutionTime(); ?>;
 			
 			var htmlencode = function(text) {
-				return $('<div></div>').text(text).html().replace(/[\r\n]+/g, '<br/>');
+				return $('<div></div>').text(text + '').html().replace(/[\r\n]+/g, '<br/>');
+			};
+
+			var categoryComparator = function(a, b) {
+				var splitA = ($.isDefined(a.name) ? a.name : a).toLowerCase().split(/\./g),
+					splitB = ($.isDefined(b.name) ? b.name : b).toLowerCase().split(/\./g);
+
+				for (var i = 0; i < splitA.length; i++) {
+					if (i >= splitB.length) return 1;
+					else if (splitA[i] < splitB[i]) return -1;
+					else if (splitA[i] > splitB[i]) return 1;
+				}
+
+				if (splitB.length > splitA.length) return -1;
+
+				return 0;
 			};
 
 			var processCategory = function(category) {
 				category = category.split('.');
-				var classes = [], currTreeNode = tree;
+				var classes = [];
 				
 				for (var i = 0; i < category.length; i++) {
 					// Add a category class for the entry.
 					classes.push('category-' + category.slice(0, i + 1).join('-'));
 
-					// Add a CSS rule for showing the entry when filtering by category.
-					categoryCSS.push('#WebLogWindow .category-' + category.slice(0, i + 1).join('-') + ' .category-' + category.slice(0, i + 1).join('-') + ' {display: block !important;}');
-					
-					if (!(category[i] in currTreeNode)) {
-						var keys = [];
-						for (var i in currTreeNode) {
-							keys.push(i);
-						}
-						currTreeNode[category[i]] = { '__parent': currTreeNode, '__category': category.slice(0, i + 1).join('.') };
+					var result = BinarySearch(categoryList, category.slice(0, i + 1).join('.'), categoryComparator);
+					if (result < 0) {
+						result = Math.abs(result) - 1;
+						categoryList.splice(result, 0, { name: category.slice(0, i + 1).join('.'), count: i + 1 == category.length ? 1 : 0 });
+					}
+					else if (i + 1 == category.length || categoryList[result].count > 0) {
+						categoryList[result].count++;
 					}
 
-					currTreeNode = currTreeNode[category[i]];
+					// Add a CSS rule for showing the entry when filtering by category.
+					categoryCSS.push('#WebLogWindow .category-' + category.slice(0, i + 1).join('-') + ' .category-' + category.slice(0, i + 1).join('-') + ' {display: block !important;}');
 				}
 
 				return classes;
 			};
 
-			var buildNSLinks = function() {
-				var categoryLinks = [];
-				for (var key in tree) {
-					if (key.indexOf('__') != 0)
-						categoryLinks.push('<span class="child">' + htmlencode(key) + '</span>');
-				}
-				$('> .categorylinks > .children', details).html(categoryLinks.join(', '));
-				
-				if ('__parent' in tree) {
-					$('> .entries', details).attr('class', 'hideentries entries category-' + tree['__category'].replace(/\./g, '-'));
-					$('> .categorylinks > .parent', details).show()
-						.find('span').text(tree['__category']);
+			var selectCategory = function() {
+				var category = $('select', details).val();
+				if (category == "") {
+					$('> .entries', details).attr('class', 'entries');
 				}
 				else {
-					$('> .entries', details).attr('class', 'entries');
-					$('> .categorylinks > .parent', details).hide();
+					$('> .entries', details).attr('class', 'hideentries entries category-' + category.replace(/\./g, '-'));
 				}
+			};
+
+			var buildCategoryOptions = function() {
+				var categoryLinks = [ '<option value="">All Categories</option>' ];
+				for (var i = 0; i < categoryList.length; i++) {
+					categoryLinks.push('<option value="' + htmlencode(categoryList[i].name) + '">' + htmlencode(categoryList[i].name) + (categoryList[i].count > 0 ? ' (' + categoryList[i].count + ')' : '') + '</span>');
+				}
+				$('> .categorylinks > select', details).html(categoryLinks.join(''));
+				selectCategory();
 			};
 			
 			var renderDetails = function() {
@@ -151,13 +165,13 @@ class WebLogRoute extends CLogRoute {
 						+ '</div>');
 				}
 
-				details.html('<div class="categorylinks">Category: <span class="parent" style="display: none;"><span></span> &gt;&gt; </span><span class="children"></span></div>'
+				details.html('<div class="categorylinks">Category: <select></select></div>'
 						+ '<div class="etime">Execution time: ' + etime + '</div>'
 						+ '<div class="entries">'
 						+ html.join("\n")
 						+ '</div>');
-						
-				buildNSLinks();
+				
+				buildCategoryOptions();
 				$('head').append('<style>' + categoryCSS.join("\n") + '</style>');
 				renderDetails = function() {};
 			};
@@ -190,13 +204,8 @@ class WebLogRoute extends CLogRoute {
 
 			details = $('<div class="details">')
 				.hide()
-				.on('click', '.parent', function() {
-					tree = tree['__parent'];
-					buildNSLinks();
-				})
-				.on('click', '.child', function() {
-					tree = tree[$(this).text()];
-					buildNSLinks();
+				.on('click, change', 'select', function() {
+					selectCategory();
 				})
 				.appendTo(main);
 		})(jQuery);
