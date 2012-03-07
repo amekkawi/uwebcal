@@ -63,7 +63,7 @@ class WebLogRoute extends CLogRoute {
 			padding: 6px 6px 0 14px;
 		}
 		
-		#WebLogWindow .nslinks {
+		#WebLogWindow .categorylinks {
 			font-size: 125%;
 			padding: 6px 6px 0 14px;
 		}
@@ -80,57 +80,60 @@ class WebLogRoute extends CLogRoute {
 		</style><script>
 		if (typeof jQuery != 'undefined' && jQuery.fn.disableTextSelection)
 			(function($){
-			var main, details, toggle, nsCSS = [], tree = { }, data = <?php echo CJSON::encode($logs); ?>, etime = <?php echo Yii::getLogger()->getExecutionTime(); ?>;
+			var main, details, toggle, categoryCSS = [], tree = { }, data = <?php echo CJSON::encode($logs); ?>, etime = <?php echo Yii::getLogger()->getExecutionTime(); ?>;
 			
 			var htmlencode = function(text) {
 				return $('<div></div>').text(text).html().replace(/[\r\n]+/g, '<br/>');
 			};
 
-			var processNS = function(ns) {
-				ns = ns.split('.');
+			var processCategory = function(category) {
+				category = category.split('.');
 				var classes = [], currTreeNode = tree;
 				
-				for (var n = 0; n < ns.length; n++) {
-					classes.push('ns-' + ns.slice(0, n + 1).join('-'));
-					nsCSS.push('#WebLogWindow .ns-' + ns.slice(0, n + 1).join('-') + ' .ns-' + ns.slice(0, n + 1).join('-') + ' {display: block !important;}');
+				for (var i = 0; i < category.length; i++) {
+					// Add a category class for the entry.
+					classes.push('category-' + category.slice(0, i + 1).join('-'));
+
+					// Add a CSS rule for showing the entry when filtering by category.
+					categoryCSS.push('#WebLogWindow .category-' + category.slice(0, i + 1).join('-') + ' .category-' + category.slice(0, i + 1).join('-') + ' {display: block !important;}');
 					
-					if (!(ns[n] in currTreeNode)) {
+					if (!(category[i] in currTreeNode)) {
 						var keys = [];
 						for (var i in currTreeNode) {
 							keys.push(i);
 						}
-						currTreeNode[ns[n]] = { '__parent': currTreeNode, '__ns': ns.slice(0, n + 1).join('.') };
+						currTreeNode[category[i]] = { '__parent': currTreeNode, '__category': category.slice(0, i + 1).join('.') };
 					}
 
-					currTreeNode = currTreeNode[ns[n]];
+					currTreeNode = currTreeNode[category[i]];
 				}
 
 				return classes;
 			};
 
 			var buildNSLinks = function() {
-				var nsLinks = [];
+				var categoryLinks = [];
 				for (var key in tree) {
 					if (key.indexOf('__') != 0)
-						nsLinks.push('<span class="child">' + htmlencode(key) + '</span>');
+						categoryLinks.push('<span class="child">' + htmlencode(key) + '</span>');
 				}
-				$('> .nslinks > .children', details).html(nsLinks.join(', '));
+				$('> .categorylinks > .children', details).html(categoryLinks.join(', '));
 				
 				if ('__parent' in tree) {
-					$('> .entries', details).attr('class', 'hideentries entries ns-' + tree['__ns'].replace(/\./g, '-'));
-					$('> .nslinks > .parent', details).show()
-						.find('span').text(tree['__ns']);
+					$('> .entries', details).attr('class', 'hideentries entries category-' + tree['__category'].replace(/\./g, '-'));
+					$('> .categorylinks > .parent', details).show()
+						.find('span').text(tree['__category']);
 				}
 				else {
 					$('> .entries', details).attr('class', 'entries');
-					$('> .nslinks > .parent', details).hide();
+					$('> .categorylinks > .parent', details).hide();
 				}
 			};
-
+			
 			var renderDetails = function() {
 				var html = [ ], profileStarts = {};
 				for (var i = 0; i < data.length; i++) {
-					var profileExtra = '', nsClasses = processNS(data[i][2]);
+					var profileExtra = '', categoryClasses = processCategory(data[i][2]);
 					
 					if (data[i][1] == 'profile') {
 						var profileKey = data[i][0].split(/:/, 2).slice(1);
@@ -141,21 +144,21 @@ class WebLogRoute extends CLogRoute {
 					}
 
 					var split = data[i][0].split(/[\n\r]+/);
-					html.push('<div class="' + data[i][1] + ' ' + nsClasses.join(' ') + ' entry">'
+					html.push('<div class="' + data[i][1] + ' ' + categoryClasses.join(' ') + ' entry">'
 						+ '<span class="label">' + htmlencode(split.shift()) + '</span><br/>'
 						+ htmlencode(data[i][1] + ' (' + data[i][2] + ') ' + data[i][3] + profileExtra) + '<br/>'
 						+ '<span class="tracelog">' + htmlencode(split.join("\n")) + '</span>'
 						+ '</div>');
 				}
 
-				details.html('<div class="nslinks">Filter: <span class="parent" style="display: none;"><span></span> &gt;&gt; </span><span class="children"></span></div>'
+				details.html('<div class="categorylinks">Category: <span class="parent" style="display: none;"><span></span> &gt;&gt; </span><span class="children"></span></div>'
 						+ '<div class="etime">Execution time: ' + etime + '</div>'
 						+ '<div class="entries">'
 						+ html.join("\n")
 						+ '</div>');
 						
 				buildNSLinks();
-				$('head').append('<style>' + nsCSS.join("\n") + '</style>');
+				$('head').append('<style>' + categoryCSS.join("\n") + '</style>');
 				renderDetails = function() {};
 			};
 			
