@@ -17,7 +17,7 @@ class AuthController extends Controller {
 	}
 	
 	public function actionIndex() {
-		$this->forward('auth/login');
+		$this->forward('login');
 	}
 	
 	public function actionLogout() {

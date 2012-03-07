@@ -27,7 +27,7 @@ class EventsController extends Controller {
 	 * Default action to handle URLs that do not specify the calendar ID.
 	 */
 	public function actionIndex($calendarid) {
-		$this->forward('/events/' . ($this->calendar['defaultview'] !== NULL ? $this->calendar['defaultview'] : Yii::app()->defaultViewAction));
+		$this->forward(($this->calendar['defaultview'] !== NULL ? $this->calendar['defaultview'] : Yii::app()->defaultViewAction));
 	}
 	
 	/**
