@@ -1,4 +1,5 @@
 #WebLogWindow {
+	display: block !important;
 	position: fixed;
 	top: 2px;
 	right: 2px;

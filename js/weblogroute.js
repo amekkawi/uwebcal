@@ -101,6 +101,7 @@ window.WEBLOGROUTE = function($, data) {
 	};
 	
 	main = $('<div id="WebLogWindow" class="yui3-cssreset yui3-cssfonts yui3-cssbase"></div>')
+		.hide()
 		.appendTo('body');
 	
 	toggle = $('<div class="toggle">Log</div>')
