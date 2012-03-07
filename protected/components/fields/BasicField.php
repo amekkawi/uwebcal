@@ -11,11 +11,6 @@
 /**
  * A basic field with one value.
  * 
- * @property string name The human-readable name of this field (e.g. "Sponsor Info").
- * @property string id The ID for the field.
- * @property array values The values for this field.
- * @property array valueIds A list of the value IDs for this field.
- * @property array schema TODO:
  * @author André Mekkawi <uwebcal@andremekkawi.com>
  * @package app.fields
  */

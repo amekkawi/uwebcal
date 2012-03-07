@@ -134,6 +134,10 @@ abstract class BaseField extends CComponent {
 		);
 	}
 	
+	/**
+	 * Get a list of the value names for this field.
+	 * @return array The value names.
+	 */
 	abstract public function getValueNames();
 	
 	/**
@@ -152,10 +156,15 @@ abstract class BaseField extends CComponent {
 		return array();
 	}
 	
+	/**
+	 * Get a list of other field class names that this field is dependant on.
+	 * 
+	 * // Example
+	 * return array('LocationField', 'ContactField');
+	 * 
+	 * @return The list of field class names.
+	 */
 	public function getDependancies() {
 		return array();
-		
-		// Example
-		return array('LocationField', 'ContactField');
 	}
 }
