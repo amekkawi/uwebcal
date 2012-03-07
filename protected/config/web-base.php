@@ -36,12 +36,24 @@ return array(
 				),
 				'app.css'=>array(
 					'baseUrl'=>'css',
-					'css'=>array('base.css'),
+					'css'=>array(
+						'base.css'
+					),
 					'depends'=>array('yui3.css')
 				),
 				'app.js'=>array(
 					'baseUrl'=>'js',
-					'js'=>array(),
+					'js'=>array(
+						'extensions.js',
+						'jquery.extensions.js'
+					),
+					'depends'=>array('jquery')
+				),
+				'jquery'=>array(
+					'baseUrl'=>'http://ajax.googleapis.com/ajax/libs/jquery/',
+					'js'=>array(
+						'1.7.1/jquery.min.js'
+					)
 				),
 				'yui3'=>array(
 					'baseUrl'=>'',
@@ -71,7 +83,7 @@ return array(
 		// uncomment the following to enable URLs in path-format
 		'urlManager'=>array(
 			'urlFormat'=>'path',
-			'showScriptName'=>false,
+			'showScriptName'=>defined('YII_DEBUG') && YII_DEBUG,
 			'useStrictParsing'=>true,
 			'appendParams'=>false,
 			'rules'=>array(
