@@ -33,6 +33,7 @@ class Controller extends CController {
 			$this->_calendarAR = $this->_calendar = NULL;
 		}
 		elseif (!isset($this->_calendarAR)) {
+			Yii::trace('Get calendar record: ' . $_GET['calendarid'], 'application.components.Controller');
 			$this->_calendarAR = Calendar::model()->findByPk($_GET['calendarid']);
 			$this->_calendar = $this->_calendarAR === NULL ? NULL : $this->_calendarAR->getAttributes();
 		}
