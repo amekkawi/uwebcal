@@ -71,6 +71,18 @@ class WebApplication extends CWebApplication {
 	public $clientScriptPackage = 'app';
 	
 	/**
+	 * @var boolean Whether to reverse the page title order.
+	 *              An example of a reversed page title would be "Login | CalendarName | App Name".
+	 */
+	public $reversePageTitle = true;
+	
+	/**
+	 * @var string The 'glue' that will be used to combine page title segments.
+	 * @see implode
+	 */
+	public $pageTitleGlue = ' | ';
+	
+	/**
 	 * Initializes the application.
 	 * @see CWebApplication::init()
 	 */

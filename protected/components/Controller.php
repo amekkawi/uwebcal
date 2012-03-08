@@ -19,6 +19,7 @@
  */
 class Controller extends CController {
 	
+	private $_pageTitle = NULL;
 	private $_calendar;
 	private $_calendarAR;
 	
@@ -115,5 +116,46 @@ class Controller extends CController {
 	protected function echoHtmlPart($part) {
 		if ($this->calendar !== NULL && $this->calendar['htmlmode'] == Calendar::HTMLMODE_PARTS && $this->calendar[$part] !== NULL)
 			echo $this->calendar[$part];
+	}
+	
+	/**
+	 * @return string the page title
+	 */
+	public function getPageTitle() {
+		if ($this->_pageTitle === NULL) {
+			$this->buildBasicPageTitle();
+			
+			if ($this->getAction() !== null)
+				array_push($this->_pageTitle, ucfirst($this->getAction()->getId()));
+			else
+				array_push($this->_pageTitle, ucfirst(basename($this->getId())));
+		}
+		
+		return implode(Yii::app()->pageTitleGlue, Yii::app()->reversePageTitle ? array_reverse($this->_pageTitle) : $this->_pageTitle);
+	}
+
+	/**
+	 * @param string $value the page title.
+	 */
+	public function setPageTitle($value) {
+		$this->_pageTitle = array($value);
+	}
+	
+	public function getPageTitleSegments() {
+		return $this->_pageTitle;
+	}
+	
+	public function pushPageTitleSegment($segment) {
+		$this->buildBasicPageTitle();
+		array_push($this->_pageTitle, $segment);
+	}
+	
+	private function buildBasicPageTitle() {
+		if ($this->_pageTitle === NULL) {
+			$this->_pageTitle = array(Yii::app()->name);
+			
+			if ($this->calendar !== NULL)
+				array_push($this->_pageTitle, $this->calendar['name']);
+		}
 	}
 }
