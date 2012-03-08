@@ -190,4 +190,38 @@ class WebApplication extends CWebApplication {
 		else
 			parent::displayException($exception);
 	}
+	
+	/**
+	 * Extract the core and field values from an array of column values.
+	 * @param array $columns The table column values. See {@link CActiveRecord::attributes}.
+	 * @param array $coreValues Variable to which an array of core values will be set. You may pass an existing array to set default values,
+	 * @param array $fieldValues Variable to which an array of field values will be set. You may pass an existing array to set default values,
+	 */
+	public function getFieldValuesFromColumns($columns, &$coreValues, &$fieldValues) {
+		if (!is_array($coreValues)) $coreValues = array();
+		if (!is_array($fieldValues)) $fieldValues = array();
+		
+		// Parse JSON data
+		if (!empty($columns['data']) && ($data = CJSON::decode($columns['data'])) !== NULL) {
+			foreach ($data as $key => $value) {
+				if (is_array($value)) {
+					$fieldValues[$key] = $value;
+				}
+				else {
+					$coreValues[$key] = $value;
+				}
+			}
+		}
+		
+		// Extract the core and field values.
+		foreach ($columns as $colName => $colValue) {
+			if (count($split = explode('_', $colName, 2)) == 2) {
+				if (!isset($fieldValues[$split[0]])) $fieldValues[$split[0]] = array();
+				$fieldValues[$split[0]][$split[1]] = $colValue;
+			}
+			else {
+				$coreValues[$colName] = $colValue;
+			}
+		}
+	}
 }
