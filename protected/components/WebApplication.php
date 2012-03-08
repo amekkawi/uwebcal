@@ -11,6 +11,7 @@
 /**
  * WebApplication extends CWebApplication by providing functionalities specific to UWebCal.
  *
+ * @property array eventFields An array of field objects that extend {@link BaseField}.
  * @author André Mekkawi <uwebcal@andremekkawi.com>
  * @package app.web
  */
@@ -97,32 +98,41 @@ class WebApplication extends CWebApplication {
 	}
 	
 	/**
-	 * Get an array of fields that are extended from {@link BaseField}.
+	 * Get an array of field objects that extend {@link BaseField}.
 	 * @return array the fields
 	 */
 	public function getEventFields() {
-		
+		return $this->_eventFields;
 	}
 	
 	public function setEventFields($fields) {
-		foreach ($fields as $i => $field) {
-			if (is_array($field)) {
-				$className = array_shift($field);
-				$class = new $className();
-				foreach ($field as $param => $value) {
-					$class->$param = $value;
-				}
-				$fields[$i] = $class;
+		$this->_eventFields = array();
+		foreach ($fields as $field) {
+			$this->addEventField($field);
+		}
+	}
+	
+	public function addEventField($field) {
+		if (is_array($field)) {
+			$className = array_shift($field);
+			$class = new $className();
+			foreach ($field as $param => $value) {
+				$class->$param = $value;
 			}
-			elseif ($field instanceof BaseField) {
-				$fields[$i] = $field;
-			}
-			else {
-				throw new CHttpException(500, Yii::t('app', 'eventField[{index}] must either be an array or a class that extends BaseField.', array('{index}' => $i)));
-			}
+			$field = $class;
+		}
+		elseif (!($field instanceof BaseField)) {
+			throw new CHttpException(500, Yii::t('app', 'An event field must either be an array or a class that extends BaseField.'));
 		}
 		
-		$this->_eventFields = $fields;
+		if (!preg_match('/^[a-z][a-z0-9]*$/', $field->id))
+			throw new CHttpException(500, Yii::t('app', 'The event field ID "{id}" is invalid.', array('{id}' => $field->id)));
+		
+		if (isset($this->_eventFields[$field->id])) {
+			throw new CHttpException(500, Yii::t('app', 'An event field with an ID of "{id}" has already been set.', array('{id}' => $field->id)));
+		}
+		
+		$this->_eventFields[$field->id] = $field;
 	}
 	
 	/**
