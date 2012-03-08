@@ -48,15 +48,15 @@ class BasicField extends BaseField {
 		$this->_value = isset($values['value']) && !empty($values['value']) ? $values['value'] : NULL;
 	}
 	
-	public function renderReadOnly($controller, $echo=true) {
+	public function renderReadOnly($controller, $return=false) {
 		if (empty($this->_value)) {
-			return $echo ? false : NULL;
+			return $return ? NULL : false;
 		}
 		
 		$html = CHtml::encode($this->_value);
 		
-		if ($echo) echo $html;
-		else return $html;
+		if ($return) return $html;
+		else echo $html;
 		
 		return true;
 	}

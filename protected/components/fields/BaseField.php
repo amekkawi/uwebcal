@@ -110,15 +110,15 @@ abstract class BaseField extends CComponent {
 	/**
 	 * Renders the HTML for the 'read only' representation of this field.
 	 * @param CController $controller
-	 * @param boolean $echo whether ot not the rendered HTML should be echoed or returned.
+	 * @param boolean $return whether the rendering result should be returned instead of being displayed to end users
 	 * 
-	 * @return boolean|string|null if $echo is true then this will return a boolean whether
-	 *                             or not the field could be rendered.
+	 * @return boolean|string|null If $return is false then this will return a boolean
+	 *                             declaring whether or not the field could be rendered.
 	 *                             
-	 *                             if $echo is false then this will return a string if the
-	 *                             field could be rendered, null otherwise.
+	 *                             If $return is true then this will return a string if the
+	 *                             field could be rendered, otherwise it will return null.
 	 */
-	abstract public function renderReadOnly($controller, $echo=true);
+	abstract public function renderReadOnly($controller, $return=false);
 	
 	/**
 	 * Renders the form HTML for editing this field.
