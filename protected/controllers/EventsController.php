@@ -23,6 +23,15 @@ class EventsController extends Controller {
 		$this->checkCalendarAccess();
 	}
 	
+	public function actions() {
+		return CMap::mergeArray(
+			array(
+				'detail' => 'application.controllers.events.DetailAction'
+			),
+			Yii::app()->eventsActions
+		);
+	}
+	
 	/**
 	 * Default action to handle URLs that do not specify the calendar ID.
 	 */
@@ -39,7 +48,7 @@ class EventsController extends Controller {
 	    $this->render('upcoming');
 	}
 	
-	private function dateToUTime($date, $default) {
+	public function dateToUTime($date, $default) {
 		if (!is_string($date)) $date = $default;
 		
 		if (($utime = strtotime($date.' 00:00:00')) === false)
@@ -87,13 +96,6 @@ class EventsController extends Controller {
 	 * Search for events based on criteria.
 	 */
 	public function actionSearch() {
-		var_dump($_GET);
-	}
-	
-	/**
-	 * Show a specific event's details.
-	 */
-	public function actionDetail() {
 		var_dump($_GET);
 	}
 }
