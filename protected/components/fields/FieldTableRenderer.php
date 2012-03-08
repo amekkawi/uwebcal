@@ -26,16 +26,16 @@ class FieldTableRenderer extends CComponent {
 	}
 	
 	/**
-	 * Render the 'view only' HTML for the fields.
+	 * Render the 'read only' HTML for the fields.
 	 * @param boolean $showEmpty Show fields names for fields that do not return HTML. Defaults to false.
 	 */
-	public function renderViewOnly($showEmpty=false) {
+	public function renderReadOnly($showEmpty=false) {
 		$fieldsToDisplay = array();
 		foreach ($this->_fields as $field) {
 			if (isset($this->_values[$field->id]))
 				$field->setValues($this->_coreValues, $this->_values[$field->id]);
 				
-			$html = $field->renderViewOnly($this->_controller, false);
+			$html = $field->renderReadOnly($this->_controller, false);
 			if ($html !== NULL || $showEmpty) {
 				array_push($fieldsToDisplay, array('name'=>$field->name, 'html'=>$html === NULL ? '' : $html));
 			}

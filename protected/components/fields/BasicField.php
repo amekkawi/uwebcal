@@ -48,7 +48,7 @@ class BasicField extends BaseField {
 		$this->_value = isset($values['value']) && !empty($values['value']) ? $values['value'] : NULL;
 	}
 	
-	public function renderViewOnly($controller, $echo=true) {
+	public function renderReadOnly($controller, $echo=true) {
 		if (empty($this->_value)) {
 			return $echo ? false : NULL;
 		}

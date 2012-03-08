@@ -108,7 +108,7 @@ abstract class BaseField extends CComponent {
 	abstract public function setValues(array $coreValues, array $values);
 	
 	/**
-	 * Renders the HTML for the 'view only' representation of this field.
+	 * Renders the HTML for the 'read only' representation of this field.
 	 * @param CController $controller
 	 * @param boolean $echo whether ot not the rendered HTML should be echoed or returned.
 	 * 
@@ -118,7 +118,7 @@ abstract class BaseField extends CComponent {
 	 *                             if $echo is false then this will return a string if the
 	 *                             field could be rendered, null otherwise.
 	 */
-	abstract public function renderViewOnly($controller, $echo=true);
+	abstract public function renderReadOnly($controller, $echo=true);
 	
 	/**
 	 * Renders the form HTML for editing this field.
