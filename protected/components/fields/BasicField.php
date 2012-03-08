@@ -59,7 +59,7 @@ class BasicField extends BaseField {
 			return $return ? NULL : false;
 		}
 		
-		$html = CHtml::encode($this->_value);
+		$html = $controller->renderPartial('/fields/basic/readonly', array('field'=>$this, 'value'=>$this->_value), true);
 		
 		if ($return) return $html;
 		else echo $html;
@@ -67,8 +67,8 @@ class BasicField extends BaseField {
 		return true;
 	}
 	
-	public function renderEditor($controller) {
-		?><input type="text" name="<?php echo CHtml::encode($this->getValueId('value')); ?>" value="<?php echo CHtml::encode(empty($this->_value) ? '' : $this->_value); ?>" /><?php
+	public function renderEditor($controller, $return=false) {
+		return $controller->renderPartial('/fields/basic/editor', array('field'=>$this, 'value'=>$this->_value), $return);
 	}
 	
 	public function getValueNames() {

@@ -1,0 +1,1 @@
+<input type="text" name="<?php echo CHtml::encode($field->getValueId('value')); ?>" value="<?php echo CHtml::encode(empty($value) ? '' : $value); ?>" />

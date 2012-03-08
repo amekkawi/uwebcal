@@ -118,7 +118,7 @@ abstract class BaseField extends CComponent {
 	/**
 	 * Renders the HTML for the 'read only' representation of this field.
 	 * @param CController $controller
-	 * @param boolean $return whether the rendering result should be returned instead of being displayed to end users
+	 * @param boolean $return whether the rendering result should be returned instead of being displayed to end users.
 	 * 
 	 * @return boolean|string|null If $return is false then this will return a boolean
 	 *                             declaring whether or not the field could be rendered.
@@ -132,8 +132,10 @@ abstract class BaseField extends CComponent {
 	 * Renders the form HTML for editing this field.
 	 * Use Yii::app()->clientScript->registerXX to include CSS and JavaScript.
 	 * @param CController $controller
+	 * @param boolean $return whether the rendering result should be returned instead of being displayed to end users.
+	 * @return the rendering result. Null if the rendering result is not required. (see {@link CController::renderPartial})
 	 */
-	abstract public function renderEditor($controller);
+	abstract public function renderEditor($controller, $return=false);
 	
 	private function getTableSchemas() {
 		return array();
