@@ -46,10 +46,12 @@ class BasicField extends BaseField {
 	
 	public function setValues(array $values, array $coreValues = array()) {
 		if (!empty($values['value'])) $this->_value = $values['value'];
+		return $this;
 	}
 	
 	public function resetValues() {
 		$this->_value = NULL;
+		return $this;
 	}
 	
 	public function renderReadOnly($controller, $return=false) {

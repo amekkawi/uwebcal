@@ -105,11 +105,13 @@ abstract class BaseField extends CComponent {
 	 * Set the values for this field.
 	 * @param array $values The values for this field, collected from columns and the 'data' column.
 	 * @param array $coreValues The core column values for the table record.
+	 * @return BaseField Returns $this to allow for chaining.
 	 */
 	abstract public function setValues(array $values, array $coreValues = array());
 	
 	/**
 	 * Reset all values for the field to their default value.
+	 * @return BaseField Returns $this to allow for chaining.
 	 */
 	abstract public function resetValues();
 	
