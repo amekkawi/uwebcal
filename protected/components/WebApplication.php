@@ -50,12 +50,12 @@ class WebApplication extends CWebApplication {
 	public $calendarNotFoundRedirect = NULL;
 	
 	/**
-	 * @var array 
+	 * @var array TODO: 
 	 */
 	public $eventsActions = array();
 	
 	/**
-	 * @var array 
+	 * @var array TODO: 
 	 */
 	public $authActions = array();
 	
@@ -82,6 +82,8 @@ class WebApplication extends CWebApplication {
 	 */
 	public $pageTitleGlue = ' | ';
 	
+	private $_eventFields = array();
+	
 	/**
 	 * Initializes the application.
 	 * @see CWebApplication::init()
@@ -92,6 +94,35 @@ class WebApplication extends CWebApplication {
 		// Make sure the loginUrl is an array
 		if (is_string($this->user->loginUrl))
 			$this->user->loginUrl = array(Yii::app()->user->loginUrl);
+	}
+	
+	/**
+	 * Get an array of fields that are extended from {@link BaseField}.
+	 * @return array the fields
+	 */
+	public function getEventFields() {
+		
+	}
+	
+	public function setEventFields($fields) {
+		foreach ($fields as $i => $field) {
+			if (is_array($field)) {
+				$className = array_shift($field);
+				$class = new $className();
+				foreach ($field as $param => $value) {
+					$class->$param = $value;
+				}
+				$fields[$i] = $class;
+			}
+			elseif ($field instanceof BaseField) {
+				$fields[$i] = $field;
+			}
+			else {
+				throw new CHttpException(500, Yii::t('app', 'eventField[{index}] must either be an array or a class that extends BaseField.', array('{index}' => $i)));
+			}
+		}
+		
+		$this->_eventFields = $fields;
 	}
 	
 	/**
