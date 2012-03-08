@@ -68,6 +68,7 @@ abstract class BaseField extends CComponent {
 	
 	/**
 	 * Returns an array containing values that will be stored in table columns.
+	 * Values must be scalar (e.g. integer, float, string or boolean).
 	 * Value names must only be lowercase letters and numbers, and must start with a letter.
 	 * Store values in table columns that need to be searchable.
 	 * 

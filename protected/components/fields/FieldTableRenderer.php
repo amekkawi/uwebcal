@@ -1,4 +1,20 @@
 <?php
+/**
+ * FieldTableRenderer class file.
+ *
+ * @author André Mekkawi <uwebcal@andremekkawi.com>
+ * @link http://www.uwebcal.com/
+ * @copyright Copyright &copy; André Mekkawi
+ * @license http://www.uwebcal.com/license/
+ */
+
+/**
+ * A helper class that displays multiple fields in a two column table.
+ * The left column has the field name and the right column has the field HTML.
+ * 
+ * @author André Mekkawi <uwebcal@andremekkawi.com>
+ * @package app.fields
+ */
 class FieldTableRenderer extends CComponent {
 	
 	/**
@@ -11,16 +27,16 @@ class FieldTableRenderer extends CComponent {
 	 */
 	public $readOnlyView = '/fields/fieldtable';
 	
-	private $_controller;
-	private $_coreValues;
-	private $_values;
-	private $_fields;
+	protected $_controller;
+	protected $_coreValues;
+	protected $_values;
+	protected $_fields;
 	
 	/**
-	 * Create a 
+	 * Creates a FieldTableRenderer.
 	 * @param CController $controller
 	 * @param array $coreValues The core values (e.g. calendarid, description) from the table columns.
-	 * @param array $values The values for the fields.
+	 * @param array $fieldValues The values for all the fields, as returned by {@link WebApplication::getFieldValuesFromColumns}.
 	 * @param array $fields The fields to render.
 	 */
 	public function __construct($controller, array $coreValues, array $fieldValues, array $fields) {
@@ -37,8 +53,7 @@ class FieldTableRenderer extends CComponent {
 	public function renderReadOnly($showEmpty=false) {
 		$fieldsToDisplay = array();
 		foreach ($this->_fields as $field) {
-			if (isset($this->_values[$field->id]))
-				$field->setValues($this->_coreValues, $this->_values[$field->id]);
+			$field->setValues($this->_coreValues, isset($this->_values[$field->id]) ? $this->_values[$field->id] : array());
 				
 			$html = $field->renderReadOnly($this->_controller, true);
 			if ($html !== NULL || $showEmpty) {
