@@ -53,7 +53,10 @@ class FieldTableRenderer extends CComponent {
 	public function renderReadOnly($showEmpty=false) {
 		$fieldsToDisplay = array();
 		foreach ($this->_fields as $field) {
-			$field->setValues($this->_coreValues, isset($this->_values[$field->id]) ? $this->_values[$field->id] : array());
+			$field->resetValues();
+			
+			if (isset($this->_values[$field->id]))
+				$field->setValues($this->_values[$field->id], $this->_coreValues);
 				
 			$html = $field->renderReadOnly($this->_controller, true);
 			if ($html !== NULL || $showEmpty) {

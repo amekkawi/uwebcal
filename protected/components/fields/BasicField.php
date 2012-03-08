@@ -44,8 +44,12 @@ class BasicField extends BaseField {
 		);
 	}
 	
-	public function setValues(array $coreValues, array $values) {
-		$this->_value = isset($values['value']) && !empty($values['value']) ? $values['value'] : NULL;
+	public function setValues(array $values, array $coreValues = array()) {
+		if (!empty($values['value'])) $this->_value = $values['value'];
+	}
+	
+	public function resetValues() {
+		$this->_value = NULL;
 	}
 	
 	public function renderReadOnly($controller, $return=false) {
