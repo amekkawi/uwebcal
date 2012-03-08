@@ -16,15 +16,17 @@
  */
 class BasicField extends BaseField {
 	
-	private $_value;
+	private $_value = NULL;
 	private $_name;
 	private $_id;
 	
 	public function setName($name) {
+		if (isset($this->_name)) throw new CHttpException(500, Yii::t('app', '{class}\'s "{prop}" property cannot be changed after it has been set.', array('{class}'=>__CLASS__, '{prop}'=>'name')));
 		$this->_name = $name;
 	}
 	
 	public function setId($id) {
+		if (isset($this->_id)) throw new CHttpException(500, Yii::t('app', '{class}\'s "{prop}" property cannot be changed after it has been set.', array('{class}'=>__CLASS__, '{prop}'=>'id')));
 		$this->_id = $id;
 	}
 	
@@ -38,20 +40,29 @@ class BasicField extends BaseField {
 	
 	public function getDataValues() {
 		return array(
-			'value'=>$_value
+			'value'=>$this->_value
 		);
 	}
 	
 	public function setValues(array $coreValues, array $values) {
-		$this->_value = $values['value'];
+		$this->_value = isset($values['value']) && !empty($values['value']) ? $values['value'] : NULL;
 	}
 	
-	public function renderViewOnly($controller) {
-		echo CHtml::encode($this->_value);
+	public function renderViewOnly($controller, $echo=true) {
+		if (empty($this->_value)) {
+			return $echo ? false : NULL;
+		}
+		
+		$html = CHtml::encode($this->_value);
+		
+		if ($echo) echo $html;
+		else return $html;
+		
+		return true;
 	}
 	
 	public function renderEditor($controller) {
-		?><input type="text" name="<?php echo CHtml::encode($this->getValueId('value')); ?>" value="<?php echo CHtml::encode($this->_value); ?>" /><?php
+		?><input type="text" name="<?php echo CHtml::encode($this->getValueId('value')); ?>" value="<?php echo CHtml::encode(empty($this->_value) ? '' : $this->_value); ?>" /><?php
 	}
 	
 	public function getValueNames() {

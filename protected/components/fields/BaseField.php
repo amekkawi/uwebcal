@@ -29,8 +29,7 @@ abstract class BaseField extends CComponent {
 	
 	/**
 	 * Returns an ID for the field.
-	 * It must only be lowercase letters, numbers and underscores.
-	 * It must start with a letter.
+	 * Ids must only be lowercase letters and numbers, and must start with a letter.
 	 * @return string The field's ID.
 	 */
 	abstract public function getId();
@@ -58,6 +57,7 @@ abstract class BaseField extends CComponent {
 	
 	/**
 	 * Get the values for this field.
+	 * Value names must only be lowercase letters and numbers, and must start with a letter.
 	 */
 	public function getValues() {
 		return CMap::mergeArray(
@@ -68,6 +68,7 @@ abstract class BaseField extends CComponent {
 	
 	/**
 	 * Returns an array containing values that will be stored in table columns.
+	 * Value names must only be lowercase letters and numbers, and must start with a letter.
 	 * Store values in table columns that need to be searchable.
 	 * 
 	 * // Example
@@ -84,6 +85,7 @@ abstract class BaseField extends CComponent {
 	
 	/**
 	 * Returns an array containing values that will be stored in the 'data' column as JSON.
+	 * Value names must only be lowercase letters and numbers, and must start with a letter.
 	 * Store values in the 'data' column that will only be displayed and do not need to be searchable.
 	 * 
 	 * // Example
@@ -108,8 +110,15 @@ abstract class BaseField extends CComponent {
 	/**
 	 * Renders the HTML for the 'view only' representation of this field.
 	 * @param CController $controller
+	 * @param boolean $echo whether ot not the rendered HTML should be echoed or returned.
+	 * 
+	 * @return boolean|string|null if $echo is true then this will return a boolean whether
+	 *                             or not the field could be rendered.
+	 *                             
+	 *                             if $echo is false then this will return a string if the
+	 *                             field could be rendered, null otherwise.
 	 */
-	abstract public function renderViewOnly($controller);
+	abstract public function renderViewOnly($controller, $echo=true);
 	
 	/**
 	 * Renders the form HTML for editing this field.
@@ -136,6 +145,7 @@ abstract class BaseField extends CComponent {
 	
 	/**
 	 * Get a list of the value names for this field.
+	 * Value names must only be lowercase letters and numbers, and must start with a letter.
 	 * @return array The value names.
 	 */
 	abstract public function getValueNames();
