@@ -78,6 +78,11 @@ class WebApplication extends CWebApplication {
 	public $reversePageTitle = true;
 	
 	/**
+	 * @var string The prefix for CSS classes used by UWebCal.
+	 */
+	public $cssPrefix = 'uwc_';
+	
+	/**
 	 * @var string The 'glue' that will be used to combine page title segments.
 	 * @see implode
 	 */
