@@ -1,7 +1,11 @@
 <?php
 class AuthController extends Controller {
 	
+	public $defaultAction = 'login';
+	
 	public function init() {
+		parent::init();
+		
 		$this->initCalendar();
 		
 		Yii::app()->clientScript->registerMetaTag('noindex,nofollow', 'robots');
@@ -14,10 +18,6 @@ class AuthController extends Controller {
 			),
 			Yii::app()->authActions
 		);
-	}
-	
-	public function actionIndex() {
-		$this->forward('login');
 	}
 	
 	public function actionLogout() {
