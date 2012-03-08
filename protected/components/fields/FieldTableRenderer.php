@@ -6,6 +6,11 @@ class FieldTableRenderer extends CComponent {
 	 */
 	public $id = null;
 	
+	/**
+	 * @var string The view that will be used by {@link FieldTableRenderer::renderReadOnly}.
+	 */
+	public $readOnlyView = '/fields/fieldtable';
+	
 	private $_controller;
 	private $_coreValues;
 	private $_values;
@@ -35,21 +40,14 @@ class FieldTableRenderer extends CComponent {
 			if (isset($this->_values[$field->id]))
 				$field->setValues($this->_coreValues, $this->_values[$field->id]);
 				
-			$html = $field->renderReadOnly($this->_controller, false);
+			$html = $field->renderReadOnly($this->_controller, true);
 			if ($html !== NULL || $showEmpty) {
 				array_push($fieldsToDisplay, array('name'=>$field->name, 'html'=>$html === NULL ? '' : $html));
 			}
 		}
 		
-		if (count($fieldsToDisplay) > 0) {
-			?><table <?php if (!empty($this->id)) echo 'id="' . $this->id . '"' ?> class="<?php echo Yii::app()->cssPrefix; ?>fieldtable" border="0"><tbody><?php
-			foreach ($fieldsToDisplay as $field) {
-				?><tr>
-					<th class="<?php echo Yii::app()->cssPrefix; ?>fieldtable-label"><?php echo CHtml::encode($field['name']); ?></th>
-					<td class="<?php echo Yii::app()->cssPrefix; ?>fieldtable-value"><?php echo $field['html']; ?></td>
-				</tr><?php
-			}
-			?></tbody></table><?php
+		if (count($fieldsToDisplay) > 0 || $showEmpty) {
+			$this->_controller->renderPartial($this->readOnlyView, array('id'=>$this->id, 'fields'=>$fieldsToDisplay));
 		}
 	}
 }
