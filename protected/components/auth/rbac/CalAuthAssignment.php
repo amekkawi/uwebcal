@@ -43,7 +43,7 @@ class CalAuthAssignment extends CComponent
 	 * @param string $bizRule the business rule associated with this assignment
 	 * @param mixed $data additional data for this assignment
 	 */
-	public function __construct($auth,$calendarId,$itemName,$userId,$bizRule=null,$data=null)
+	public function __construct(ICalAuthManager $auth,$calendarId,$itemName,$userId,$bizRule=null,$data=null)
 	{
 		$this->_auth=$auth;
 		$this->_calendarId=$calendarId;

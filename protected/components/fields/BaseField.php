@@ -126,7 +126,7 @@ abstract class BaseField extends CComponent {
 	 *                             If $return is true then this will return a string if the
 	 *                             field could be rendered, otherwise it will return null.
 	 */
-	abstract public function renderReadOnly($controller, $return=false);
+	abstract public function renderReadOnly(CController $controller, $return=false);
 	
 	/**
 	 * Renders the form HTML for editing this field.
@@ -135,7 +135,7 @@ abstract class BaseField extends CComponent {
 	 * @param boolean $return whether the rendering result should be returned instead of being displayed to end users.
 	 * @return the rendering result. Null if the rendering result is not required. (see {@link CController::renderPartial})
 	 */
-	abstract public function renderEditor($controller, $return=false);
+	abstract public function renderEditor(CController $controller, $return=false);
 	
 	private function getTableSchemas() {
 		return array();

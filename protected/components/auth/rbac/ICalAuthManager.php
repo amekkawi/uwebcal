@@ -69,7 +69,7 @@ interface ICalAuthManager
 	 * @param CalAuthItem $item the item to be saved.
 	 * @param string $oldName the old item name. If null, it means the item name is not changed.
 	 */
-	public function saveAuthItem($item,$oldName=null);
+	public function saveAuthItem(CalAuthItem $item,$oldName=null);
 
 	/**
 	 * Adds an item as a child of another item.
@@ -154,7 +154,7 @@ interface ICalAuthManager
 	 * Saves the changes to an authorization assignment.
 	 * @param CalAuthAssignment $assignment the assignment that has been changed.
 	 */
-	public function saveAuthAssignment($assignment);
+	public function saveAuthAssignment(CalAuthAssignment $assignment);
 	
 	/**
 	 * Return if the specified user has at least one assignment to the specified calendar.

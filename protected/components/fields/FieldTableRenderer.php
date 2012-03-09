@@ -39,7 +39,7 @@ class FieldTableRenderer extends CComponent {
 	 * @param array $fieldValues The values for all the fields, as returned by {@link WebApplication::getFieldValuesFromColumns}.
 	 * @param array $fields The fields to render.
 	 */
-	public function __construct($controller, array $coreValues, array $fieldValues, array $fields) {
+	public function __construct(CController $controller, array $coreValues, array $fieldValues, array $fields) {
 		$this->_controller = $controller;
 		$this->_coreValues = $coreValues;
 		$this->_values = $fieldValues;

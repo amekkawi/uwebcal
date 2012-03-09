@@ -382,7 +382,7 @@ class DbAuthManager extends AuthManager
 	 * Saves the changes to an authorization assignment.
 	 * @param CalAuthAssignment $assignment the assignment that has been changed.
 	 */
-	public function saveAuthAssignment($assignment)
+	public function saveAuthAssignment(CalAuthAssignment $assignment)
 	{
 		$this->db->createCommand()
 			->update($this->assignmentTable, array(
@@ -558,7 +558,7 @@ class DbAuthManager extends AuthManager
 	 * @param CalAuthItem $item the item to be saved.
 	 * @param string $oldName the old item name. If null, it means the item name is not changed.
 	 */
-	public function saveAuthItem($item,$oldName=null)
+	public function saveAuthItem(CalAuthItem $item,$oldName=null)
 	{
 		if($this->usingSqlite() && $oldName!==null && $item->getName()!==$oldName)
 		{

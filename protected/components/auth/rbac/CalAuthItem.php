@@ -51,11 +51,11 @@ class CalAuthItem extends CComponent
 	 * @param string $calendarId the calendar ID
 	 * @param string $name authorization item name
 	 * @param integer $type authorization item type. This can be 0 (operation), 1 (task) or 2 (role).
-	 * @param description $description the description
+	 * @param string $description the description
 	 * @param string $bizRule the business rule associated with this item
 	 * @param mixed $data additional data for this item
 	 */
-	public function __construct($auth,$calendarId,$name,$type,$description='',$bizRule=null,$data=null)
+	public function __construct(ICalAuthManager $auth,$calendarId,$name,$type,$description='',$bizRule=null,$data=null)
 	{
 		$this->_type=(int)$type;
 		$this->_auth=$auth;
