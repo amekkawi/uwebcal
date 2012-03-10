@@ -53,6 +53,10 @@ if (isset($local['components']['urlManager']['rules'])) {
 	unset($base['components']['urlManager']);
 }
 
+// Remove base DB config unless it was defined locally as well.
+if (!isset($local['components']['db']))
+	unset($base['components']['db']);
+
 $config = CMap::mergeArray($base, !is_array($local) ? array() : $local);
 
 // Disable the URL manager if not set in the local config.
