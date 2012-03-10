@@ -54,7 +54,7 @@ class BasicField extends BaseField {
 		return $this;
 	}
 	
-	public function renderReadOnly($controller, $return=false) {
+	public function renderReadOnly(CController $controller, $return=false) {
 		if (empty($this->_value)) {
 			return $return ? NULL : false;
 		}
@@ -67,7 +67,7 @@ class BasicField extends BaseField {
 		return true;
 	}
 	
-	public function renderEditor($controller, $return=false) {
+	public function renderEditor(CController $controller, $return=false) {
 		return $controller->renderPartial('/fields/basic/editor', array('field'=>$this, 'value'=>$this->_value), $return);
 	}
 	
