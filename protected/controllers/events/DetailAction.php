@@ -16,8 +16,8 @@ class DetailAction extends CAction {
 			throw new CHttpException(404, Yii::t('app', 'An event with an ID of "{id}" does not exist.', array('{id}' => $id)));
 		}
 		
-		// Parse out the core and field values from the event columns.
-		Yii::app()->getFieldValuesFromColumns($event->attributes, $coreValues, $fieldValues);
+		// Extract out the core and field values from the event columns.
+		$event->extractFieldData($fieldValues, $coreValues);
 		
 		$this->controller->render('detail', array('event'=>$event, 'coreValues'=>$coreValues, 'fieldValues'=>$fieldValues));
 	}

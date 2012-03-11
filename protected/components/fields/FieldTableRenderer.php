@@ -36,7 +36,7 @@ class FieldTableRenderer extends CComponent {
 	 * Creates a FieldTableRenderer.
 	 * @param CController $controller
 	 * @param array $fields The fields to render.
-	 * @param array $fieldAttributes The values for all the fields, as returned by {@link WebApplication::getFieldValuesFromColumns}.
+	 * @param array $fieldAttributes The values for all the fields, as returned by {@link FieldModel::ExtractData}.
 	 * @param array $coreValues The core values (e.g. calendarid, description) from the table columns.
 	 */
 	public function __construct(CController $controller, $fields, array $fieldAttributes, array $coreValues=array()) {

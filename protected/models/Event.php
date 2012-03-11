@@ -40,4 +40,8 @@ class Event extends CActiveRecord {
 	public function primaryKey() {
 		return array('calendarid', 'eventid', 'repeatindex');
 	}
+	
+	public function extractFieldData(&$fieldValues, &$coreValues) {
+		FieldModel::ExtractData($this->attributes, $fieldValues, $coreValues);
+	}
 }

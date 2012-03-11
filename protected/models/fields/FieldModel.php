@@ -111,4 +111,38 @@ abstract class FieldModel extends CModel {
 	 * @return the rendering result. Null if the rendering result is not required. (see {@link CController::renderPartial})
 	 */
 	abstract public function renderEditor(CController $controller, $return=false);
+	
+	/**
+	 * Extract the core and field values from an array of column values.
+	 * @param array $columns The table column values. See {@link CActiveRecord::attributes}.
+	 * @param array $coreValues Variable to which an array of core values will be set. You may pass an existing array to set default values,
+	 * @param array $fieldValues Variable to which an array of field values will be set. You may pass an existing array to set default values,
+	 */
+	final static public function ExtractData($columns, &$fieldValues, &$coreValues=NULL) {
+		if (!is_array($coreValues)) $coreValues = array();
+		if (!is_array($fieldValues)) $fieldValues = array();
+		
+		// Parse JSON data
+		if (!empty($columns['data']) && ($data = CJSON::decode($columns['data'])) !== NULL) {
+			foreach ($data as $key => $value) {
+				if (is_array($value)) {
+					$fieldValues[$key] = $value;
+				}
+				else {
+					$coreValues[$key] = $value;
+				}
+			}
+		}
+		
+		// Extract the core and field values.
+		foreach ($columns as $colName => $colValue) {
+			if (strpos($colName, 'f_') === 0 && count($split = explode('_', $colName)) == 3) {
+				if (!isset($fieldValues[$split[1]])) $fieldValues[$split[1]] = array();
+				$fieldValues[$split[1]][$split[2]] = $colValue;
+			}
+			else {
+				$coreValues[$colName] = $colValue;
+			}
+		}
+	}
 }

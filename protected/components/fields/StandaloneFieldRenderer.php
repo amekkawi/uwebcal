@@ -25,7 +25,7 @@ class StandaloneFieldRenderer extends FieldTableRenderer {
 	 * Creates a StandaloneFieldRenderer
 	 * @param CController $controller
 	 * @param array $coreValues The core values (e.g. calendarid, description) from the table columns.
-	 * @param array $fieldValues The values for all the fields, as returned by {@link WebApplication::getFieldValuesFromColumns}.
+	 * @param array $fieldValues The values for all the fields, as returned by {@link FieldModel::ExtractData}.
 	 * @param array $field The field to render.
 	 */
 	public function __construct(CController $controller, $field, array $fieldValues, array $coreValues=array()) {
