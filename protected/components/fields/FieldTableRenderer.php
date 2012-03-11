@@ -28,22 +28,22 @@ class FieldTableRenderer extends CComponent {
 	public $readOnlyView = '/fields/fieldtable';
 	
 	protected $_controller;
-	protected $_coreValues;
-	protected $_values;
+	protected $_attributes;
 	protected $_fields;
+	protected $_coreValues;
 	
 	/**
 	 * Creates a FieldTableRenderer.
 	 * @param CController $controller
-	 * @param array $coreValues The core values (e.g. calendarid, description) from the table columns.
-	 * @param array $fieldValues The values for all the fields, as returned by {@link WebApplication::getFieldValuesFromColumns}.
 	 * @param array $fields The fields to render.
+	 * @param array $fieldAttributes The values for all the fields, as returned by {@link WebApplication::getFieldValuesFromColumns}.
+	 * @param array $coreValues The core values (e.g. calendarid, description) from the table columns.
 	 */
-	public function __construct(CController $controller, array $coreValues, array $fieldValues, array $fields) {
+	public function __construct(CController $controller, $fields, array $fieldAttributes, array $coreValues=array()) {
 		$this->_controller = $controller;
-		$this->_coreValues = $coreValues;
-		$this->_values = $fieldValues;
 		$this->_fields = $fields;
+		$this->_attributes = $fieldAttributes;
+		$this->_coreValues = array(); //$coreValues;
 	}
 	
 	/**
@@ -53,14 +53,14 @@ class FieldTableRenderer extends CComponent {
 	public function renderReadOnly($showEmpty=false) {
 		$fieldsToDisplay = array();
 		foreach ($this->_fields as $field) {
-			$field->resetValues();
+			$field->unsetAttributes();
 			
-			if (isset($this->_values[$field->id]))
-				$field->setValues($this->_values[$field->id], $this->_coreValues);
+			if (isset($this->_attributes[$field->name]))
+				$field->setAttributes($this->_attributes[$field->name]);
 				
 			$html = $field->renderReadOnly($this->_controller, true);
 			if ($html !== NULL || $showEmpty) {
-				array_push($fieldsToDisplay, array('name'=>$field->name, 'html'=>$html === NULL ? '' : $html));
+				$fieldsToDisplay[] = array('name'=>$field->name, 'html'=>$html === NULL ? '' : $html);
 			}
 		}
 		

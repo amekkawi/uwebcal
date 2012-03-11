@@ -21,6 +21,7 @@ return array(
 	// autoloading model and component classes
 	'import'=>array(
 		'application.models.*',
+		'application.models.fields.*',
 		'application.components.*',
 		'application.components.auth.*',
 		'application.components.auth.rbac.*',
@@ -31,7 +32,7 @@ return array(
 		'application.components.db.oci.*',
 		'application.components.db.pgsql.*',
 		'application.components.db.sqlite.*',
-),
+	),
 
 	// application components
 	'components'=>array(

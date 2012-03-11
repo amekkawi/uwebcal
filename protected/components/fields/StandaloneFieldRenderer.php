@@ -28,7 +28,7 @@ class StandaloneFieldRenderer extends FieldTableRenderer {
 	 * @param array $fieldValues The values for all the fields, as returned by {@link WebApplication::getFieldValuesFromColumns}.
 	 * @param array $field The field to render.
 	 */
-	public function __construct(CController $controller, array $coreValues, array $fieldValues, $field) {
-		parent::__construct($controller, $coreValues, $fieldValues, array($field));
+	public function __construct(CController $controller, $field, array $fieldValues, array $coreValues=array()) {
+		parent::__construct($controller, array($field), $fieldValues, $coreValues);
 	}
 }

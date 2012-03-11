@@ -11,7 +11,7 @@
 /**
  * WebApplication extends CWebApplication by providing functionalities specific to UWebCal.
  *
- * @property array eventFields An array of field objects that extend {@link BaseField}.
+ * @property array eventFields An array of field objects that extend {@link FieldModel}.
  * @author André Mekkawi <uwebcal@andremekkawi.com>
  * @package app.web
  */
@@ -103,7 +103,7 @@ class WebApplication extends CWebApplication {
 	}
 	
 	/**
-	 * Get an array of field objects that extend {@link BaseField}.
+	 * Get an array of field objects that extend {@link FieldModel}.
 	 * @return array the fields
 	 */
 	public function getEventFields() {
@@ -117,27 +117,25 @@ class WebApplication extends CWebApplication {
 		}
 	}
 	
-	public function addEventField($field) {
-		if (is_array($field)) {
-			$className = array_shift($field);
-			$class = new $className();
-			foreach ($field as $param => $value) {
-				$class->$param = $value;
-			}
-			$field = $class;
-		}
-		elseif (!($field instanceof BaseField)) {
-			throw new CHttpException(500, Yii::t('app', 'An event field must either be an array or a class that extends BaseField.'));
+	public function addEventField($config) {
+		if (is_array($config) && isset($config[0]) && is_string($config[0])) {
+			$config['class'] = array_shift($config);
 		}
 		
-		if (!preg_match('/^[a-z][a-z0-9]*$/', $field->id))
-			throw new CHttpException(500, Yii::t('app', 'The event field ID "{id}" is invalid.', array('{id}' => $field->id)));
+		$field = Yii::createComponent($config);
 		
-		if (isset($this->_eventFields[$field->id])) {
-			throw new CHttpException(500, Yii::t('app', 'An event field with an ID of "{id}" has already been set.', array('{id}' => $field->id)));
+		if (!($field instanceof FieldModel)) {
+			throw new CHttpException(500, Yii::t('app', 'An event field must either be an array or a class that extends FieldModel.'));
 		}
 		
-		$this->_eventFields[$field->id] = $field;
+		if (!preg_match('/^[a-z][a-z0-9]*$/', $field->name))
+			throw new CHttpException(500, Yii::t('app', 'The event field name "{name}" is invalid.', array('{name}' => $field->name)));
+		
+		if (isset($this->_eventFields[$field->name])) {
+			throw new CHttpException(500, Yii::t('app', 'An event field with a name of "{name}" has already been set.', array('{name}' => $field->name)));
+		}
+		
+		$this->_eventFields[$field->name] = $field;
 	}
 	
 	/**
