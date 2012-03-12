@@ -33,6 +33,7 @@ return array(
 		'application.components.db.pgsql.*',
 		'application.components.db.sqlite.*',
 		'application.components.validators.*',
+		'application.widgets.*',
 	),
 
 	// application components
