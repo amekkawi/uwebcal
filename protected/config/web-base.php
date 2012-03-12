@@ -32,6 +32,7 @@ return array(
 		'application.components.db.oci.*',
 		'application.components.db.pgsql.*',
 		'application.components.db.sqlite.*',
+		'application.components.validators.*',
 	),
 
 	// application components
